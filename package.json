@@ -1,0 +1,39 @@
+{
+  "name": "express-systemjs-translate",
+  "version": "0.0.0",
+  "description": "Express middleware to speed up systemjs development loads by running translations serverside",
+  "main": "lib/index.js",
+  "scripts": {
+    "lint": "jshint .",
+    "test": "npm run lint && mocha",
+    "travis": "npm run lint && npm run coverage",
+    "coverage": "istanbul cover ./node_modules/mocha/bin/_mocha -- --reporter dot"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Munter/express-systemjs-translate.git"
+  },
+  "keywords": [
+    "express",
+    "middleware",
+    "systemjs",
+    "server",
+    "transpile",
+    "translate",
+    "hook"
+  ],
+  "author": "Peter Müller <munter@fumle.dk>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Munter/express-systemjs-translate/issues"
+  },
+  "homepage": "https://github.com/Munter/express-systemjs-translate",
+  "devDependencies": {
+    "coveralls": "^2.11.3",
+    "istanbul": "^0.3.17",
+    "jshint": "^2.8.0",
+    "mocha": "^2.2.5",
+    "mocha-lcov-reporter": "0.0.2",
+    "unexpected": "^9.2.1"
+  }
+}
