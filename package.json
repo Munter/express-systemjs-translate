@@ -30,10 +30,15 @@
   "homepage": "https://github.com/Munter/express-systemjs-translate",
   "devDependencies": {
     "coveralls": "^2.11.3",
+    "express": "^4.13.1",
     "istanbul": "^0.3.17",
     "jshint": "^2.8.0",
+    "magicpen-media": "^1.5.0",
+    "messy": "^6.5.0",
     "mocha": "^2.2.5",
     "mocha-lcov-reporter": "0.0.2",
-    "unexpected": "^9.2.1"
+    "unexpected": "^9.2.1",
+    "unexpected-express": "^7.3.0",
+    "unexpected-messy": "^4.6.0"
   }
 }
