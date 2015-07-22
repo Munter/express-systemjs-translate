@@ -40,5 +40,9 @@
     "unexpected": "^9.2.1",
     "unexpected-express": "^7.3.0",
     "unexpected-messy": "^4.6.0"
+  },
+  "dependencies": {
+    "express-interceptor": "^1.0.1",
+    "systemjs-builder": "^0.12.2"
   }
 }
