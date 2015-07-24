@@ -43,6 +43,7 @@
   },
   "dependencies": {
     "express-interceptor": "^1.0.1",
-    "systemjs-builder": "^0.12.2"
+    "systemjs-builder": "^0.12.2",
+    "when": "^3.7.3"
   }
 }

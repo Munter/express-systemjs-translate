@@ -11,7 +11,7 @@ var root = Path.resolve(__dirname, '../fixtures');
 
 var app = express()
   .use(middleware({
-    workDir: '../fixtures'
+    workDir: root
   }))
  .use(express.static(root));
 
@@ -23,12 +23,7 @@ describe('middleware', function () {
   describe('when requesting files wihtout the systemjs accepts header', function () {
     it('should pass javascript through unmodified', function () {
       return expect(app, 'to yield exchange', {
-        request: {
-          url: '/default.js',
-          headers: {
-            accepts: 'nothing'
-          }
-        },
+        request: '/default.js',
         response: {
           statusCode: 200,
           headers: {
@@ -61,6 +56,26 @@ describe('middleware', function () {
             'Content-Type': 'text/css; charset=UTF-8'
           },
           body: 'body { color: hotpink; }\n'
+        }
+      });
+    });
+  });
+
+  describe('when requesting files with the systemjs accepts header', function () {
+    it('should pass javascript through unmodified', function () {
+      return expect(app, 'to yield exchange', {
+        request: {
+          url: '/default.js',
+          headers: {
+            accepts: 'module/x-module-loader-module */*'
+          }
+        },
+        response: {
+          statusCode: 200,
+          headers: {
+            'Content-Type': /^application\/javascript/
+          },
+          body: expect.it('to match', /^System\.registerDynamic\("fixtures\/default\.js"/).and('to contain', 'console.log(\'hello world\');\n')
         }
       });
     });
