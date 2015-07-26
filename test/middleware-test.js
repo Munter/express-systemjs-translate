@@ -62,7 +62,7 @@ describe('middleware', function () {
   });
 
   describe('when requesting files with the systemjs accepts header', function () {
-    it('should pass javascript through unmodified', function () {
+    it('should compile javascript', function () {
       return expect(app, 'to yield exchange', {
         request: {
           url: '/default.js',
@@ -79,5 +79,96 @@ describe('middleware', function () {
         }
       });
     });
+
+    it('should handle commonjs', function () {
+      return expect(app, 'to yield exchange', {
+        request: {
+          url: '/lib/stringExport.js',
+          headers: {
+            accepts: 'module/x-module-loader-module */*'
+          }
+        },
+        response: {
+          statusCode: 200,
+          headers: {
+            'Content-Type': /^application\/javascript/
+          },
+          body: expect.it('to match', /^System\.registerDynamic\("fixtures\/lib\/stringExport\.js"/).and('to contain', 'module.exports = \'foo\';\n')
+        }
+      });
+    });
+
+    it('should handle commonjs imports', function () {
+      return expect(app, 'to yield exchange', {
+        request: {
+          url: '/lib/requireWorking.js',
+          headers: {
+            accepts: 'module/x-module-loader-module */*'
+          }
+        },
+        response: {
+          statusCode: 200,
+          headers: {
+            'Content-Type': /^application\/javascript/
+          },
+          body: expect.it('to match', /^System\.registerDynamic\("fixtures\/lib\/requireWorking\.js"/).and('to contain', 'var foo = require("fixtures/lib/stringExport.js");\n  module.exports = {foo: foo};\n')
+        }
+      });
+    });
+
+    it('should pass uncompileable errors through to the client', function () {
+      return expect(app, 'to yield exchange', {
+        request: {
+          url: '/lib/broken.js',
+          headers: {
+            accepts: 'module/x-module-loader-module */*'
+          }
+        },
+        response: {
+          statusCode: 200,
+          headers: {
+            'Content-Type': /^application\/javascript/
+          },
+          body: '"\n'
+        }
+      });
+    });
+
+    it('should handle commonjs imports of broken assets', function () {
+      return expect(app, 'to yield exchange', {
+        request: {
+          url: '/lib/requireBroken.js',
+          headers: {
+            accepts: 'module/x-module-loader-module */*'
+          }
+        },
+        response: {
+          statusCode: 200,
+          headers: {
+            'Content-Type': /^application\/javascript/
+          },
+          body: expect.it('to match', /^System\.registerDynamic\("fixtures\/lib\/requireBroken\.js"/).and('to contain', 'var foo = require("fixtures/lib/broken.js");\n  module.exports = {foo: foo};\n')
+        }
+      });
+    });
+
+    it('should handle jspm modules', function () {
+      return expect(app, 'to yield exchange', {
+        request: {
+          url: '/jspm_packages/github/components/jquery@2.1.4.js',
+          headers: {
+            accepts: 'module/x-module-loader-module */*'
+          }
+        },
+        response: {
+          statusCode: 200,
+          headers: {
+            'Content-Type': /^application\/javascript/
+          },
+          body: expect.it('to match', /^System\.registerDynamic\("fixtures\/jspm_packages\/github\/components\/jquery@2\.1\.4\.js"/)
+        }
+      });
+    });
+
   });
 });
