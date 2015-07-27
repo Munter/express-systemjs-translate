@@ -18,6 +18,7 @@ System.config({
     "babel": "npm:babel-core@5.8.3",
     "babel-runtime": "npm:babel-runtime@5.8.3",
     "core-js": "npm:core-js@0.9.18",
+    "jquery": "github:components/jquery@2.1.4",
     "github:jspm/nodelibs-process@0.1.1": {
       "process": "npm:process@0.10.1"
     },
