@@ -40,7 +40,7 @@
     "mocha": "^2.2.5",
     "mocha-lcov-reporter": "0.0.2",
     "unexpected": "^9.2.1",
-    "unexpected-express": "^7.3.0",
+    "unexpected-express": "^8.0.1",
     "unexpected-messy": "^4.6.0"
   },
   "dependencies": {
