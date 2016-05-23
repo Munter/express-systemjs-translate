@@ -37,7 +37,7 @@
     "jspm": "^0.16.0-beta.3",
     "magicpen-media": "^1.5.0",
     "messy": "^6.5.0",
-    "mocha": "^2.2.5",
+    "mocha": "^2.5.0",
     "mocha-lcov-reporter": "0.0.2",
     "unexpected": "^9.2.1",
     "unexpected-express": "^7.3.0",
