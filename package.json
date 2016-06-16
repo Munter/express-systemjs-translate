@@ -31,7 +31,7 @@
   "homepage": "https://github.com/Munter/express-systemjs-translate",
   "devDependencies": {
     "coveralls": "^2.11.3",
-    "express": "^4.13.1",
+    "express": "^4.14.0",
     "istanbul": "^0.3.17",
     "jshint": "^2.8.0",
     "jspm": "^0.16.0-beta.3",
