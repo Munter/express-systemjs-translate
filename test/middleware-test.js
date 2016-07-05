@@ -11,7 +11,8 @@ var root = Path.resolve(__dirname, '../fixtures');
 
 var app = express()
   .use(middleware({
-    workDir: root
+    baseUrl: root,
+    configFile: 'config.js'
   }))
  .use(express.static(root));
 
