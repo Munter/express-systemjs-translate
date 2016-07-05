@@ -75,7 +75,7 @@ describe('middleware', function () {
           headers: {
             'Content-Type': /^application\/javascript/
           },
-          body: expect.it('to match', /^System\.registerDynamic\("fixtures\/default\.js"/).and('to contain', 'console.log(\'hello world\');\n')
+          body: expect.it('to begin with', 'System.registerDynamic([]').and('to contain', 'console.log(\'hello world\');\n')
         }
       });
     });
@@ -93,7 +93,7 @@ describe('middleware', function () {
           headers: {
             'Content-Type': /^application\/javascript/
           },
-          body: expect.it('to match', /^System\.registerDynamic\("fixtures\/lib\/stringExport\.js"/).and('to contain', 'module.exports = \'foo\';\n')
+          body: expect.it('to begin with', 'System.registerDynamic([]').and('to contain', 'module.exports = \'foo\';\n')
         }
       });
     });
@@ -111,7 +111,7 @@ describe('middleware', function () {
           headers: {
             'Content-Type': /^application\/javascript/
           },
-          body: expect.it('to match', /^System\.registerDynamic\("fixtures\/lib\/requireWorking\.js"/).and('to contain', 'var foo = require("fixtures/lib/stringExport.js");\n  module.exports = {foo: foo};\n')
+          body: expect.it('to begin with', 'System.registerDynamic(["./stringExport"]').and('to contain', 'var foo = $__require(\'./stringExport\');\n  module.exports = {foo: foo};\n')
         }
       });
     });
@@ -147,7 +147,7 @@ describe('middleware', function () {
           headers: {
             'Content-Type': /^application\/javascript/
           },
-          body: expect.it('to match', /^System\.registerDynamic\("fixtures\/lib\/requireBroken\.js"/).and('to contain', 'var foo = require("fixtures/lib/broken.js");\n  module.exports = {foo: foo};\n')
+          body: expect.it('to begin with', 'System.registerDynamic(["./broken"]').and('to contain', 'var foo = $__require(\'./broken\');\n  module.exports = {foo: foo};\n')
         }
       });
     });
@@ -165,7 +165,7 @@ describe('middleware', function () {
           headers: {
             'Content-Type': /^application\/javascript/
           },
-          body: expect.it('to match', /^System\.registerDynamic\("fixtures\/jspm_packages\/github\/components\/jquery@2\.1\.4\.js"/)
+          body: expect.it('to begin with', '(function() {\nvar define = System.amdDefine;\ndefine(["github:components/jquery@2.1.4/jquery"]')
         }
       });
     });
