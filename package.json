@@ -6,7 +6,7 @@
   "scripts": {
     "install": "cd fixtures && ../node_modules/.bin/jspm install && cd ..",
     "lint": "jshint .",
-    "test": "npm run lint && mocha",
+    "test": "mocha && npm run lint",
     "travis": "npm run lint && npm run coverage",
     "coverage": "istanbul cover ./node_modules/mocha/bin/_mocha -- --reporter dot"
   },
