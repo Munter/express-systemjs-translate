@@ -4,7 +4,7 @@
   "description": "Express middleware to speed up systemjs development loads by running translations serverside",
   "main": "lib/index.js",
   "scripts": {
-    "install": "cd fixtures && ../node_modules/.bin/jspm install && cd ..",
+    "install": "jspm install",
     "lint": "jshint .",
     "test": "mocha && npm run lint",
     "travis": "npm run lint && npm run coverage",
@@ -38,11 +38,25 @@
     "messy": "^6.5.0",
     "mocha": "^2.2.5",
     "mocha-lcov-reporter": "^1.2.0",
+    "proxyquire": "^1.7.10",
     "systemjs-builder": "^0.15.23",
     "unexpected": "^10.14.2",
     "unexpected-express": "^8.2.0"
   },
   "dependencies": {
     "extend": "^3.0.0"
+  },
+  "jspm": {
+    "directories": {
+      "baseURL": "fixtures"
+    },
+    "dependencies": {
+      "jquery": "github:components/jquery@2.1.4"
+    },
+    "devDependencies": {
+      "babel": "npm:babel-core@^5.8.24",
+      "babel-runtime": "npm:babel-runtime@^5.8.24",
+      "core-js": "npm:core-js@^1.1.4"
+    }
   }
 }
