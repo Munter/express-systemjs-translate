@@ -8,6 +8,36 @@ express-systemjs-translate
 
 Express middleware to speed up systemjs development loads by running translations serverside.
 
+Usage
+-----
+
+You can use express-systemjs-translate with either [jspm]() or [systemjs.builder](). The configuration with jspm is simpler, since `baseUrl` the path to your systemjs configuration are implicit.
+
+**Example usage with JSPM:**
+
+```javascript
+var express = require('express');
+var translate = require('express-systemjs-translate');
+
+var app = express()
+  .use(translate())
+  .use(express.static('path/to/webroot'));
+```
+
+**Example usage with systemjs-builder:**
+
+```javascript
+var express = require('express');
+var translate = require('express-systemjs-translate');
+
+var app = express()
+  .use(translate({
+    baseUrl: 'path/to/webroot',
+    configFile: 'relative/path/from/baseUrl/to/config.js'
+  }))
+  .use(express.static('path/to/webroot'));
+```
+
 
 License
 -------
