@@ -126,11 +126,8 @@ describe('middleware', function () {
           }
         },
         response: {
-          statusCode: 200,
-          headers: {
-            'Content-Type': /^application\/javascript/
-          },
-          body: '"\n'
+          errorPassedToNext: /Unterminated String Literal/,
+          statusCode: 500
         }
       });
     });
@@ -168,6 +165,30 @@ describe('middleware', function () {
           },
           body: expect.it('to begin with', '(function() {\nvar define = System.amdDefine;\ndefine(["github:components/jquery@2.1.4/jquery"]')
         }
+      });
+    });
+
+    it('should return a 304 status code if ETag matches', function () {
+      return expect(app, 'to yield exchange', {
+        request: {
+          url: '/default.js',
+          headers: {
+            accepts: 'module/x-module-loader-module */*'
+          }
+        },
+        response: 200
+      })
+      .then(function (context) {
+        return expect(app, 'to yield exchange', {
+          request: {
+            url: '/default.js',
+            headers: {
+              accepts: 'module/x-module-loader-module */*',
+              'If-None-Match': context.res.get('etag')
+            }
+          },
+          response: 304
+        });
       });
     });
 
