@@ -74,7 +74,7 @@ function runtests(app, description) {
           request: {
             url: '/default.js',
             headers: {
-              accepts: 'module/x-module-loader-module */*'
+              accept: 'application/x-es-module */*'
             }
           },
           response: {
@@ -92,7 +92,7 @@ function runtests(app, description) {
           request: {
             url: '/lib/stringExport.js',
             headers: {
-              accepts: 'module/x-module-loader-module */*'
+              accept: 'application/x-es-module */*'
             }
           },
           response: {
@@ -110,7 +110,7 @@ function runtests(app, description) {
           request: {
             url: '/lib/requireWorking.js',
             headers: {
-              accepts: 'module/x-module-loader-module */*'
+              accept: 'application/x-es-module */*'
             }
           },
           response: {
@@ -128,7 +128,7 @@ function runtests(app, description) {
           request: {
             url: '/lib/broken.js',
             headers: {
-              accepts: 'module/x-module-loader-module */*'
+              accept: 'application/x-es-module */*'
             }
           },
           response: {
@@ -143,7 +143,7 @@ function runtests(app, description) {
           request: {
             url: '/lib/requireBroken.js',
             headers: {
-              accepts: 'module/x-module-loader-module */*'
+              accept: 'application/x-es-module */*'
             }
           },
           response: {
@@ -161,7 +161,7 @@ function runtests(app, description) {
           request: {
             url: '/jspm_packages/github/components/jquery@2.1.4.js',
             headers: {
-              accepts: 'module/x-module-loader-module */*'
+              accept: 'application/x-es-module */*'
             }
           },
           response: {
@@ -179,7 +179,7 @@ function runtests(app, description) {
           request: {
             url: '/default.js',
             headers: {
-              accepts: 'module/x-module-loader-module */*'
+              accept: 'application/x-es-module */*'
             }
           },
           response: 200
@@ -189,7 +189,7 @@ function runtests(app, description) {
             request: {
               url: '/default.js',
               headers: {
-                accepts: 'module/x-module-loader-module */*',
+                accept: 'application/x-es-module */*',
                 'If-None-Match': context.res.get('etag')
               }
             },
