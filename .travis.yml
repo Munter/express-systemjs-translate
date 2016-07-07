@@ -6,8 +6,6 @@ cache:
 node_js:
   - "0.10"
   - "0.12"
-  - "1"
-  - "2"
   - "4"
   - "6"
 script: "npm run-script travis"
