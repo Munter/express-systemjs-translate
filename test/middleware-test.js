@@ -30,7 +30,7 @@ function runtests(app, description) {
       return expect(app, 'to be a function');
     });
 
-    describe('when requesting files wihtout the systemjs accepts header', function () {
+    describe('when requesting files without the systemjs accepts header', function () {
       it('should pass javascript through unmodified', function () {
         return expect(app, 'to yield exchange', {
           request: '/default.js',
@@ -201,6 +201,20 @@ function runtests(app, description) {
         });
       });
 
+    });
+
+    describe('when requesting the SystemJS config file', function () {
+      it('should serve the config file unmodified when no modules have been translated', function () {
+
+      });
+
+      it('should augment the config with an empty depCache after serving a module with no dependencies', function () {
+
+      });
+
+      it('should augment the config with depCache representing the translated modules dependency tree', function () {
+
+      });
     });
   });
 }
