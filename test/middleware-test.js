@@ -205,15 +205,58 @@ function runtests(app, description) {
 
     describe('when requesting the SystemJS config file', function () {
       it('should serve the config file unmodified when no modules have been translated', function () {
-
+        return expect(app, 'to yield exchange', {
+          request: {
+            url: '/config.js'
+          },
+          response: {
+            body: expect.it('not to contain', 'depCache')
+          }
+        });
       });
 
       it('should augment the config with an empty depCache after serving a module with no dependencies', function () {
-
+        return expect(app, 'to yield exchange', {
+          request: {
+            url: '/default.js',
+            headers: {
+              accept: 'application/x-es-module */*'
+            }
+          },
+          response: 200
+        })
+        .then(function (context) {
+          return expect(app, 'to yield exchange', {
+            request: {
+              url: '/config.js'
+            },
+            response: {
+              body: expect.it('to contain', 'depCache:{}')
+            }
+          });
+        });
       });
 
       it('should augment the config with depCache representing the translated modules dependency tree', function () {
-
+        return expect(app, 'to yield exchange', {
+          request: {
+            url: '/lib/requireWorking.js',
+            headers: {
+              accept: 'application/x-es-module */*'
+            }
+          },
+          response: 200
+        })
+        .then(function (context) {
+          return expect(app, 'to yield exchange', {
+            request: {
+              url: '/config.js'
+            },
+            response: {
+              body: expect.it('to contain', 'depCache:{"lib/requireWorking":["./stringExport"]}')
+            }
+          });
+        });
       });
     });
   });
