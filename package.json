@@ -4,7 +4,6 @@
   "description": "Express middleware to speed up systemjs development loads by running translations serverside",
   "main": "lib/index.js",
   "scripts": {
-    "install": "jspm install",
     "lint": "jshint .",
     "test": "mocha && npm run lint",
     "travis": "npm run lint && npm run coverage",
