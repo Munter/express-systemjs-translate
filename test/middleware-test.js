@@ -10,29 +10,36 @@ var expect = require('unexpected')
 
 var root = Path.resolve(__dirname, '../fixtures');
 
-var jspmApp = express()
-  .use(require('../lib/index')({
-    compileOnly: true
-  }))
-  .use(express.static(root));
 
-var builderApp = express()
-  .use(proxyquire('../lib/index', { 'jspm': null })({
-    baseUrl: root,
-    configFile: 'config.js',
-    compileOnly: true
-  }))
-  .use(express.static(root));
+var getJspmApp = function () {
+  return express()
+    .use(require('../lib/index')({
+      serverRoot: root,
+      compileOnly: true
+    }))
+    .use(express.static(root));
+};
 
-function runtests(app, description) {
+var getBuilderApp = function () {
+  return express()
+    .use(proxyquire('../lib/index', { 'jspm': null })({
+      serverRoot: root,
+      baseUrl: root,
+      configFile: 'config.js',
+      compileOnly: true
+    }))
+    .use(express.static(root));
+};
+
+function runtests(getApp, description) {
   describe(description, function () {
     it('should be defined', function () {
-      return expect(app, 'to be a function');
+      return expect(getApp(), 'to be a function');
     });
 
-    describe('when requesting files wihtout the systemjs accepts header', function () {
+    describe('when requesting files without the systemjs accepts header', function () {
       it('should pass javascript through unmodified', function () {
-        return expect(app, 'to yield exchange', {
+        return expect(getApp(), 'to yield exchange', {
           request: '/default.js',
           response: {
             statusCode: 200,
@@ -45,7 +52,7 @@ function runtests(app, description) {
       });
 
       it('should pass html through unmodified', function () {
-        return expect(app, 'to yield exchange', {
+        return expect(getApp(), 'to yield exchange', {
           request: '/default.html',
           response: {
             statusCode: 200,
@@ -58,7 +65,7 @@ function runtests(app, description) {
       });
 
       it('should pass css through unmodified', function () {
-        return expect(app, 'to yield exchange', {
+        return expect(getApp(), 'to yield exchange', {
           request: '/default.css',
           response: {
             statusCode: 200,
@@ -73,7 +80,7 @@ function runtests(app, description) {
 
     describe('when requesting files with the systemjs accepts header', function () {
       it('should compile javascript', function () {
-        return expect(app, 'to yield exchange', {
+        return expect(getApp(), 'to yield exchange', {
           request: {
             url: '/default.js',
             headers: {
@@ -91,7 +98,7 @@ function runtests(app, description) {
       });
 
       it('should handle commonjs', function () {
-        return expect(app, 'to yield exchange', {
+        return expect(getApp(), 'to yield exchange', {
           request: {
             url: '/lib/stringExport.js',
             headers: {
@@ -109,7 +116,7 @@ function runtests(app, description) {
       });
 
       it('should handle commonjs imports', function () {
-        return expect(app, 'to yield exchange', {
+        return expect(getApp(), 'to yield exchange', {
           request: {
             url: '/lib/requireWorking.js',
             headers: {
@@ -127,7 +134,7 @@ function runtests(app, description) {
       });
 
       it('should pass uncompileable errors through to the client', function () {
-        return expect(app, 'to yield exchange', {
+        return expect(getApp(), 'to yield exchange', {
           request: {
             url: '/lib/broken.js',
             headers: {
@@ -142,7 +149,7 @@ function runtests(app, description) {
       });
 
       it('should handle commonjs imports of broken assets', function () {
-        return expect(app, 'to yield exchange', {
+        return expect(getApp(), 'to yield exchange', {
           request: {
             url: '/lib/requireBroken.js',
             headers: {
@@ -160,7 +167,7 @@ function runtests(app, description) {
       });
 
       it('should handle jspm modules', function () {
-        return expect(app, 'to yield exchange', {
+        return expect(getApp(), 'to yield exchange', {
           request: {
             url: '/jspm_packages/github/components/jquery@2.1.4.js',
             headers: {
@@ -178,6 +185,8 @@ function runtests(app, description) {
       });
 
       it('should return a 304 status code if ETag matches', function () {
+        var app = getApp();
+
         return expect(app, 'to yield exchange', {
           request: {
             url: '/default.js',
@@ -202,8 +211,70 @@ function runtests(app, description) {
       });
 
     });
+
+    describe('when requesting the SystemJS config file', function () {
+      it('should augment the config with an empty depCache when no modules have been translated', function () {
+        return expect(getApp(), 'to yield exchange', {
+          request: {
+            url: '/config.js'
+          },
+          response: {
+            body: expect.it('to contain', 'depCache: {}')
+          }
+        });
+      });
+
+      it('should augment the config with an empty depCache after serving a module with no dependencies', function () {
+        var app = getApp();
+
+        return expect(app, 'to yield exchange', {
+          request: {
+            url: '/default.js',
+            headers: {
+              accept: 'application/x-es-module */*'
+            }
+          },
+          response: 200
+        })
+        .then(function (context) {
+          return expect(app, 'to yield exchange', {
+            request: {
+              url: '/config.js'
+            },
+            response: {
+              body: expect.it('to contain', 'depCache: {}')
+            }
+          });
+        });
+      });
+
+      it('should augment the config with depCache representing the translated modules dependency tree', function () {
+        var app = getApp();
+
+        return expect(app, 'to yield exchange', {
+          request: {
+            url: '/lib/requireWorking.js',
+            headers: {
+              accept: 'application/x-es-module */*'
+            }
+          },
+          response: 200
+        })
+        .delay(10)
+        .then(function (context) {
+          return expect(app, 'to yield exchange', {
+            request: {
+              url: '/config.js'
+            },
+            response: {
+              body: expect.it('to contain', 'depCache: {"lib/requireWorking.js":["./stringExport"]}')
+            }
+          });
+        });
+      });
+    });
   });
 }
 
-runtests(jspmApp, 'with Jspm module installed');
-runtests(builderApp, 'with systemjs-builder installed');
+runtests(getJspmApp, 'with Jspm module installed');
+runtests(getBuilderApp, 'with systemjs-builder installed');
