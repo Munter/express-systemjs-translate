@@ -212,7 +212,7 @@ function runtests(getApp, description) {
 
     });
 
-    describe('when requesting the SystemJS config file', function () {
+    describe.skip('when requesting the SystemJS config file', function () {
       it('should augment the config with an empty depCache when no modules have been translated', function () {
         return expect(getApp(), 'to yield exchange', {
           request: {
