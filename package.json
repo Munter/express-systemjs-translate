@@ -33,7 +33,7 @@
     "express": "^4.13.1",
     "istanbul": "^0.4.4",
     "jshint": "^2.8.0",
-    "jspm": "^0.16.0-beta.3",
+    "jspm": "^0.16.39",
     "messy": "^6.5.0",
     "mocha": "^2.2.5",
     "mocha-lcov-reporter": "^1.2.0",
@@ -49,6 +49,9 @@
     "lodash.difference": "^4.3.0"
   },
   "jspm": {
+    "configFiles": {
+      "jspm": "fixtures/config.js"
+    },
     "directories": {
       "baseURL": "fixtures"
     },
