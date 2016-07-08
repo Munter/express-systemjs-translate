@@ -11,13 +11,16 @@ var expect = require('unexpected')
 var root = Path.resolve(__dirname, '../fixtures');
 
 var jspmApp = express()
-  .use(require('../lib/index')())
+  .use(require('../lib/index')({
+    compileOnly: true
+  }))
   .use(express.static(root));
 
 var builderApp = express()
   .use(proxyquire('../lib/index', { 'jspm': null })({
     baseUrl: root,
-    configFile: 'config.js'
+    configFile: 'config.js',
+    compileOnly: true
   }))
   .use(express.static(root));
 
