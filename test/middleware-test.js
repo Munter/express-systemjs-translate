@@ -236,7 +236,7 @@ function runtests(getApp, description) {
           },
           response: 200
         })
-        .then(function (context) {
+        .then(function () {
           return expect(app, 'to yield exchange', {
             request: {
               url: '/config.js'
@@ -261,7 +261,7 @@ function runtests(getApp, description) {
           response: 200
         })
         .delay(10)
-        .then(function (context) {
+        .then(function () {
           return expect(app, 'to yield exchange', {
             request: {
               url: '/config.js'
