@@ -19,7 +19,7 @@ Projects with 1000+ modules, taking ~60 seconds for a full load with browser-onl
 Usage
 -----
 
-You can use express-systemjs-translate with either [jspm](https://www.npmjs.com/package/jspm) or [systemjs-builder](https://www.npmjs.com/package/systemjs-builder). The configuration with jspm is simpler, since `baseUrl` the path to your systemjs configuration are implicit.
+You can use express-systemjs-translate with either [jspm](https://www.npmjs.com/package/jspm) or [systemjs-builder](https://www.npmjs.com/package/systemjs-builder). The configuration with jspm is simpler, since `baseUrl` and `configFile` are implicit.
 
 This middleware will only handle requests to javascript modules, so it is recommended to have different middleware handling static file requests further down the middleware stack. [express.static](http://expressjs.com/en/starter/static-files.html) serves this purpose very well.
 
@@ -57,9 +57,9 @@ SystemJS Configuration
 
 In order to make the middleware work correctly a few SystemJS configurations are essential.
 
-You need the `[defaultjsextensions](https://github.com/systemjs/systemjs/blob/master/docs/config-api.md#defaultjsextensions)` setting to be `false`. This is default from SystemJS 0.17 and above. If this setting is missing you are likely to encounter issues with wrong file name resolving.
+You need the [`defaultjsextensions`](https://github.com/systemjs/systemjs/blob/master/docs/config-api.md#defaultjsextensions) setting to be `false`. This is default from SystemJS 0.17 and above. If this setting is missing you are likely to encounter issues with wrong file name resolving.
 
-You need to configure loader plugin patterns matches in your configuration rather than using the plugin syntax inline (eg. `System.import('path/to/template.tpl!tpl'))`). Instead you need to configure your `meta` section to apply your desired loader on the specific module patterns you need.
+You need to configure loader plugin patterns matches in your configuration rather than using the plugin syntax inline (eg. `System.import('path/to/template.tpl!tpl')`). Instead you need to configure your `meta` section to apply your desired loader on the specific module patterns you need.
 
 An SystemJS configuration following these rules could look like this:
 
