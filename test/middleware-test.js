@@ -138,7 +138,8 @@ function runtests(getApp, description) {
               headers: {
                 'Content-Type': /^application\/javascript/
               },
-              body: expect.it('to begin with', 'System.registerDynamic(["./stringExport"]').and('to contain', 'var foo = $__require(\'./stringExport\');\n  module.exports = {foo: foo};\n')
+              body: expect.it('to begin with', 'System.registerDynamic(["lib/stringExport.js"]')
+                .and('to contain', 'var foo = $__require(\'lib/stringExport.js\');\n  module.exports = {foo: foo};\n')
             }
           });
         });
@@ -171,7 +172,7 @@ function runtests(getApp, description) {
               headers: {
                 'Content-Type': /^application\/javascript/
               },
-              body: expect.it('to begin with', 'System.registerDynamic(["./broken"]').and('to contain', 'var foo = $__require(\'./broken\');\n  module.exports = {foo: foo};\n')
+              body: expect.it('to begin with', 'System.registerDynamic(["lib/broken.js"]').and('to contain', 'var foo = $__require(\'lib/broken.js\');\n  module.exports = {foo: foo};\n')
             }
           });
         });
@@ -189,7 +190,7 @@ function runtests(getApp, description) {
               headers: {
                 'Content-Type': /^application\/javascript/
               },
-              body: expect.it('to begin with', '(function() {\nvar define = System.amdDefine;\ndefine(["github:components/jquery@2.1.4/jquery"]')
+              body: expect.it('to begin with', '(function() {\nvar define = System.amdDefine;\ndefine(["github:components/jquery@2.1.4/jquery.js"]')
             }
           });
         });
@@ -272,14 +273,14 @@ function runtests(getApp, description) {
                 'Content-Type': /^application\/javascript/
               },
               body: expect.it('to begin with', 'System.registerDynamic("lib/stringExport.js", []')
-                .and('to contain', 'System.registerDynamic("lib/requireWorking.js", ["./stringExport"]')
-                .and('to contain', 'var foo = $__require(\'./stringExport\');\n  module.exports = {foo: foo};\n')
+                .and('to contain', 'System.registerDynamic("lib/requireWorking.js", ["lib/stringExport.js"]')
+                .and('to contain', 'var foo = $__require(\'lib/stringExport.js\');\n  module.exports = {foo: foo};\n')
             }
           });
         });
 
         it('should pass uncompileable errors through to the client', function () {
-          return expect(getApp(), 'to yield exchange', {
+          return expect(getApp({ bundle: true }), 'to yield exchange', {
             request: {
               url: '/lib/broken.js',
               headers: {
@@ -293,8 +294,8 @@ function runtests(getApp, description) {
           });
         });
 
-        it('should handle commonjs imports of broken assets', function () {
-          return expect(getApp(), 'to yield exchange', {
+        it('should error on commonjs imports of broken assets', function () {
+          return expect(getApp({ bundle: true }), 'to yield exchange', {
             request: {
               url: '/lib/requireBroken.js',
               headers: {
@@ -302,17 +303,14 @@ function runtests(getApp, description) {
               }
             },
             response: {
-              statusCode: 200,
-              headers: {
-                'Content-Type': /^application\/javascript/
-              },
-              body: expect.it('to begin with', 'System.registerDynamic(["./broken"]').and('to contain', 'var foo = $__require(\'./broken\');\n  module.exports = {foo: foo};\n')
+              errorPassedToNext: /Unterminated String Literal/,
+              statusCode: 500
             }
           });
         });
 
         it('should handle jspm modules', function () {
-          return expect(getApp(), 'to yield exchange', {
+          return expect(getApp({ bundle: true }), 'to yield exchange', {
             request: {
               url: '/jspm_packages/github/components/jquery@2.1.4.js',
               headers: {
@@ -324,13 +322,32 @@ function runtests(getApp, description) {
               headers: {
                 'Content-Type': /^application\/javascript/
               },
-              body: expect.it('to begin with', '(function() {\nvar define = System.amdDefine;\ndefine(["github:components/jquery@2.1.4/jquery"]')
+              body: expect.it('to begin with', '"bundle";\n(function() {\nvar define = System.amdDefine;')
+            }
+          });
+        });
+
+        it('should handle jspm module imports', function () {
+          return expect(getApp({ bundle: true }), 'to yield exchange', {
+            request: {
+              url: 'lib/requireJquery.js',
+              headers: {
+                accept: 'application/x-es-module */*'
+              }
+            },
+            response: {
+              statusCode: 200,
+              headers: {
+                'Content-Type': /^application\/javascript/
+              },
+              body: expect.it('to begin with', '"bundle";\n(function() {\nvar define = System.amdDefine;')
+                .and('to contain', 'System.registerDynamic("lib/requireJquery.js", ["github:components/jquery@2.1.4.js"]')
             }
           });
         });
 
         it('should return a 304 status code if ETag matches', function () {
-          var app = getApp();
+          var app = getApp({ bundle: true });
 
           return expect(app, 'to yield exchange', {
             request: {
