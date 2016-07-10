@@ -5,6 +5,7 @@ var fs = require('fs');
 var express = require('express');
 var proxyquire = require('proxyquire').noPreserveCache();
 var extend = require('extend');
+var sinon = require('sinon');
 
 var expect = require('unexpected')
   .clone()
@@ -221,20 +222,24 @@ function runtests(getApp, description) {
 
     });
 
-    describe.skip('when requesting the SystemJS config file', function () {
+    describe('when requesting the SystemJS config file', function () {
       it('should augment the config with an empty depCache when no modules have been translated', function () {
-        return expect(getApp(), 'to yield exchange', {
+        var stub = sinon.stub(console, 'error');
+
+        return expect(getApp({ depCache: true }), 'to yield exchange', {
           request: {
             url: '/config.js'
           },
           response: {
             body: expect.it('to contain', 'depCache: {}')
           }
-        });
+        })
+        .finally(stub.restore);
       });
 
       it('should augment the config with an empty depCache after serving a module with no dependencies', function () {
-        var app = getApp();
+        var stub = sinon.stub(console, 'error');
+        var app = getApp({ depCache: true });
 
         return expect(app, 'to yield exchange', {
           request: {
@@ -254,11 +259,13 @@ function runtests(getApp, description) {
               body: expect.it('to contain', 'depCache: {}')
             }
           });
-        });
+        })
+        .finally(stub.restore);
       });
 
       it('should augment the config with depCache representing the translated modules dependency tree', function () {
-        var app = getApp();
+        var stub = sinon.stub(console, 'error');
+        var app = getApp({ depCache: true });
 
         return expect(app, 'to yield exchange', {
           request: {
@@ -276,10 +283,11 @@ function runtests(getApp, description) {
               url: '/config.js'
             },
             response: {
-              body: expect.it('to contain', 'depCache: {"lib/requireWorking.js":["lib/stringExport.js"]}')
+              body: expect.it('to contain', 'depCache: {"lib/requireWorking.js":["./stringExport"]}')
             }
           });
-        });
+        })
+        .finally(stub.restore);
       });
     });
 

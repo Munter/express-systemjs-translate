@@ -38,6 +38,7 @@
     "mocha": "^2.2.5",
     "mocha-lcov-reporter": "^1.2.0",
     "proxyquire": "^1.7.10",
+    "sinon": "^1.17.4",
     "systemjs-builder": "^0.15.23",
     "unexpected": "^10.14.2",
     "unexpected-express": "^8.2.0"
