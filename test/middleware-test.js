@@ -33,7 +33,7 @@ var getBuilderApp = function () {
 
 it('should throw when neither jspm or systemjs-builder are installed', function () {
   return expect(function () {
-    var app = proxyquire('../lib/index', { 'jspm': null, 'systemjs-builder': null })();
+    proxyquire('../lib/index', { 'jspm': null, 'systemjs-builder': null })();
   }, 'to throw');
 });
 
