@@ -119,6 +119,15 @@ var middleware = translate({
 });
 ```
 
+Thanks
+------
+
+This middleware has been written in close collaboration with:
+
+- [Guy Bedford](https://github.com/guybedford)
+- [Gustav Nikolaj](https://github.com/gustavnikolaj)
+- [Andreas Lind](https://github.com/papandreou)
+
 
 License
 -------
