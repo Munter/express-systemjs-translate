@@ -83,5 +83,6 @@
 
     // Custom Globals
     "predef"        : [         // additional predefined global variables
+      "Promise"
     ]
 }

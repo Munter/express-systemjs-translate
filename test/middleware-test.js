@@ -1,8 +1,10 @@
 'use strict';
 
 var Path = require('path');
+var fs = require('fs');
 var express = require('express');
 var proxyquire = require('proxyquire').noPreserveCache();
+var extend = require('extend');
 
 var expect = require('unexpected')
   .clone()
@@ -11,23 +13,23 @@ var expect = require('unexpected')
 var root = Path.resolve(__dirname, '../fixtures');
 
 
-var getJspmApp = function () {
+var getJspmApp = function (options) {
   return express()
-    .use(require('../lib/index')({
+    .use(require('../lib/index')(extend({
       serverRoot: root,
       bundle: false
-    }))
+    }, options)))
     .use(express.static(root));
 };
 
-var getBuilderApp = function () {
+var getBuilderApp = function (options) {
   return express()
-    .use(proxyquire('../lib/index', { 'jspm': null })({
+    .use(proxyquire('../lib/index', { 'jspm': null })(extend({
       serverRoot: root,
       baseUrl: root,
       configFile: 'config.js',
       bundle: false
-    }))
+    }, options)))
     .use(express.static(root));
 };
 
@@ -274,9 +276,135 @@ function runtests(getApp, description) {
               url: '/config.js'
             },
             response: {
-              body: expect.it('to contain', 'depCache: {"lib/requireWorking.js":["./stringExport"]}')
+              body: expect.it('to contain', 'depCache: {"lib/requireWorking.js":["lib/stringExport.js"]}')
             }
           });
+        });
+      });
+    });
+
+    describe('when not watching files', function () {
+      it('should respond 304 when not modifying files', function () {
+        var app = getApp({ watchFiles: false, bundle: true });
+
+        return expect(app, 'to yield exchange', {
+          request: {
+            url: '/lib/noWatchMain.js',
+            headers: {
+              accept: 'application/x-es-module */*'
+            }
+          },
+          response: {
+            statusCode: 200
+          }
+        })
+        .then(function (context) {
+          return expect(app, 'to yield exchange', {
+            request: {
+              url: '/lib/noWatchMain.js',
+              headers: {
+                accept: 'application/x-es-module */*',
+                'If-None-Match': context.res.get('etag')
+              }
+            },
+            response: 304
+          });
+        });
+      });
+
+      it('should respond 200 with fresh content when modifying main file', function () {
+        var app = getApp({ watchFiles: false, bundle: true });
+        var testFile = Path.resolve(Path.join(__dirname, '../fixtures/lib/noWatchMain.js'));
+        var originalContent = fs.readFileSync(testFile, 'utf8');
+
+        return expect(app, 'to yield exchange', {
+          request: {
+            url: '/lib/noWatchMain.js',
+            headers: {
+              accept: 'application/x-es-module */*'
+            }
+          },
+          response: {
+            statusCode: 200,
+            body: expect.it('to contain', 'var b = \'bar\';')
+          }
+        })
+        .then(function (context) {
+          return new Promise(function (resolve, reject) {
+            fs.writeFile(testFile, originalContent.replace('bar', 'baz'), 'utf8', function (error) {
+              if (error) {
+                return reject(error);
+              } else {
+                return resolve(context);
+              }
+            });
+          });
+        })
+        .then(function (context) {
+          return expect(app, 'to yield exchange', {
+            request: {
+              url: '/lib/noWatchMain.js',
+              headers: {
+                accept: 'application/x-es-module */*',
+                'If-None-Match': context.res.get('etag')
+              }
+            },
+            response: {
+              statusCode: 200,
+              body: expect.it('to contain', 'var b = \'baz\';')
+            }
+          });
+        })
+        .finally(function () {
+          return fs.writeFileSync(testFile, originalContent);
+        });
+      });
+
+      it('should respond 200 with fresh content when modifying dependency', function () {
+        var app = getApp({ watchFiles: false, bundle: true });
+        var testFile = Path.resolve(Path.join(__dirname, '../fixtures/lib/noWatchDependency.js'));
+        var originalContent = fs.readFileSync(testFile, 'utf8');
+
+        return expect(app, 'to yield exchange', {
+          request: {
+            url: '/lib/noWatchMain.js',
+            headers: {
+              accept: 'application/x-es-module */*'
+            }
+          },
+          response: {
+            statusCode: 200,
+            body: expect.it('to contain', 'hello world')
+          }
+        })
+        .then(function (context) {
+          return new Promise(function (resolve, reject) {
+            fs.writeFile(testFile, originalContent.replace('hello', 'goodbye'), 'utf8', function (error) {
+              if (error) {
+                return reject(error);
+              } else {
+                return resolve(context);
+              }
+            });
+          });
+        })
+        .then(function (context) {
+          return expect(app, 'to yield exchange', {
+            request: {
+              url: '/lib/noWatchMain.js',
+              headers: {
+                accept: 'application/x-es-module */*',
+                'If-None-Match': context.res.get('etag')
+              }
+            },
+            response: {
+              statusCode: 200,
+              body: expect.it('to contain', 'goodbye world')
+            }
+          });
+        })
+        .finally(function () {
+          return fs.writeFileSync(testFile, originalContent);
         });
       });
     });
