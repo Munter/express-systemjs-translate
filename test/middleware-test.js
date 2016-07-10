@@ -31,11 +31,18 @@ var getBuilderApp = function () {
     .use(express.static(root));
 };
 
+it('should throw when neither jspm or systemjs-builder are installed', function () {
+  return expect(function () {
+    var app = proxyquire('../lib/index', { 'jspm': null, 'systemjs-builder': null })();
+  }, 'to throw');
+});
+
 function runtests(getApp, description) {
   describe(description, function () {
     it('should be defined', function () {
       return expect(getApp(), 'to be a function');
     });
+
 
     describe('when requesting files without the systemjs accepts header', function () {
       it('should pass javascript through unmodified', function () {
