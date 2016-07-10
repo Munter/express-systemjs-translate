@@ -15,7 +15,7 @@ var getJspmApp = function () {
   return express()
     .use(require('../lib/index')({
       serverRoot: root,
-      compileOnly: true
+      bundle: false
     }))
     .use(express.static(root));
 };
@@ -26,7 +26,7 @@ var getBuilderApp = function () {
       serverRoot: root,
       baseUrl: root,
       configFile: 'config.js',
-      compileOnly: true
+      bundle: false
     }))
     .use(express.static(root));
 };
