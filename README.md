@@ -57,7 +57,7 @@ SystemJS Configuration
 
 In order to make the middleware work correctly a few SystemJS configurations are essential.
 
-You need the [`defaultjsextensions`](https://github.com/systemjs/systemjs/blob/master/docs/config-api.md#defaultjsextensions) setting to be `false`. This is default from SystemJS 0.17 and above. If this setting is missing you are likely to encounter issues with wrong file name resolving.
+You need the [`defaultJSExtensions`](https://github.com/systemjs/systemjs/blob/master/docs/config-api.md#defaultjsextensions) setting to be `false`. This is default from SystemJS 0.17 and above. If this setting is missing you are likely to encounter issues with wrong file name resolving.
 
 You need to configure loader plugin patterns matches in your configuration rather than using the plugin syntax inline (eg. `System.import('path/to/template.tpl!tpl')`). Instead you need to configure your `meta` section to apply your desired loader on the specific module patterns you need.
 
