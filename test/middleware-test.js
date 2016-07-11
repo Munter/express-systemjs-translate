@@ -89,135 +89,290 @@ function runtests(getApp, description) {
     });
 
     describe('when requesting files with the systemjs accepts header', function () {
-      it('should compile javascript', function () {
-        return expect(getApp(), 'to yield exchange', {
-          request: {
-            url: '/default.js',
-            headers: {
-              accept: 'application/x-es-module */*'
-            }
-          },
-          response: {
-            statusCode: 200,
-            headers: {
-              'Content-Type': /^application\/javascript/
+      describe('with bundling disabled', function () {
+        it('should compile javascript', function () {
+          return expect(getApp(), 'to yield exchange', {
+            request: {
+              url: '/default.js',
+              headers: {
+                accept: 'application/x-es-module */*'
+              }
             },
-            body: expect.it('to begin with', 'System.registerDynamic([]').and('to contain', 'console.log(\'hello world\');\n')
-          }
-        });
-      });
-
-      it('should handle commonjs', function () {
-        return expect(getApp(), 'to yield exchange', {
-          request: {
-            url: '/lib/stringExport.js',
-            headers: {
-              accept: 'application/x-es-module */*'
+            response: {
+              statusCode: 200,
+              headers: {
+                'Content-Type': /^application\/javascript/
+              },
+              body: expect.it('to begin with', 'System.registerDynamic([]').and('to contain', 'console.log(\'hello world\');\n')
             }
-          },
-          response: {
-            statusCode: 200,
-            headers: {
-              'Content-Type': /^application\/javascript/
+          });
+        });
+
+        it('should handle commonjs', function () {
+          return expect(getApp(), 'to yield exchange', {
+            request: {
+              url: '/lib/stringExport.js',
+              headers: {
+                accept: 'application/x-es-module */*'
+              }
             },
-            body: expect.it('to begin with', 'System.registerDynamic([]').and('to contain', 'module.exports = \'foo\';\n')
-          }
-        });
-      });
-
-      it('should handle commonjs imports', function () {
-        return expect(getApp(), 'to yield exchange', {
-          request: {
-            url: '/lib/requireWorking.js',
-            headers: {
-              accept: 'application/x-es-module */*'
+            response: {
+              statusCode: 200,
+              headers: {
+                'Content-Type': /^application\/javascript/
+              },
+              body: expect.it('to begin with', 'System.registerDynamic([]').and('to contain', 'module.exports = \'foo\';\n')
             }
-          },
-          response: {
-            statusCode: 200,
-            headers: {
-              'Content-Type': /^application\/javascript/
+          });
+        });
+
+        it('should handle commonjs imports', function () {
+          return expect(getApp(), 'to yield exchange', {
+            request: {
+              url: '/lib/requireWorking.js',
+              headers: {
+                accept: 'application/x-es-module */*'
+              }
             },
-            body: expect.it('to begin with', 'System.registerDynamic(["./stringExport"]').and('to contain', 'var foo = $__require(\'./stringExport\');\n  module.exports = {foo: foo};\n')
-          }
-        });
-      });
-
-      it('should pass uncompileable errors through to the client', function () {
-        return expect(getApp(), 'to yield exchange', {
-          request: {
-            url: '/lib/broken.js',
-            headers: {
-              accept: 'application/x-es-module */*'
+            response: {
+              statusCode: 200,
+              headers: {
+                'Content-Type': /^application\/javascript/
+              },
+              body: expect.it('to begin with', 'System.registerDynamic(["lib/stringExport.js"]')
+                .and('to contain', 'var foo = $__require(\'lib/stringExport.js\');\n  module.exports = {foo: foo};\n')
             }
-          },
-          response: {
-            errorPassedToNext: /Unterminated String Literal/,
-            statusCode: 500
-          }
+          });
         });
-      });
 
-      it('should handle commonjs imports of broken assets', function () {
-        return expect(getApp(), 'to yield exchange', {
-          request: {
-            url: '/lib/requireBroken.js',
-            headers: {
-              accept: 'application/x-es-module */*'
-            }
-          },
-          response: {
-            statusCode: 200,
-            headers: {
-              'Content-Type': /^application\/javascript/
+        it('should pass uncompileable errors through to the client', function () {
+          return expect(getApp(), 'to yield exchange', {
+            request: {
+              url: '/lib/broken.js',
+              headers: {
+                accept: 'application/x-es-module */*'
+              }
             },
-            body: expect.it('to begin with', 'System.registerDynamic(["./broken"]').and('to contain', 'var foo = $__require(\'./broken\');\n  module.exports = {foo: foo};\n')
-          }
-        });
-      });
-
-      it('should handle jspm modules', function () {
-        return expect(getApp(), 'to yield exchange', {
-          request: {
-            url: '/jspm_packages/github/components/jquery@2.1.4.js',
-            headers: {
-              accept: 'application/x-es-module */*'
+            response: {
+              errorPassedToNext: /Unterminated String Literal/,
+              statusCode: 500
             }
-          },
-          response: {
-            statusCode: 200,
-            headers: {
-              'Content-Type': /^application\/javascript/
+          });
+        });
+
+        it('should handle commonjs imports of broken assets', function () {
+          return expect(getApp(), 'to yield exchange', {
+            request: {
+              url: '/lib/requireBroken.js',
+              headers: {
+                accept: 'application/x-es-module */*'
+              }
             },
-            body: expect.it('to begin with', '(function() {\nvar define = System.amdDefine;\ndefine(["github:components/jquery@2.1.4/jquery"]')
-          }
-        });
-      });
-
-      it('should return a 304 status code if ETag matches', function () {
-        var app = getApp();
-
-        return expect(app, 'to yield exchange', {
-          request: {
-            url: '/default.js',
-            headers: {
-              accept: 'application/x-es-module */*'
+            response: {
+              statusCode: 200,
+              headers: {
+                'Content-Type': /^application\/javascript/
+              },
+              body: expect.it('to begin with', 'System.registerDynamic(["lib/broken.js"]').and('to contain', 'var foo = $__require(\'lib/broken.js\');\n  module.exports = {foo: foo};\n')
             }
-          },
-          response: 200
-        })
-        .then(function (context) {
+          });
+        });
+
+        it('should handle jspm modules', function () {
+          return expect(getApp(), 'to yield exchange', {
+            request: {
+              url: '/jspm_packages/github/components/jquery@2.1.4.js',
+              headers: {
+                accept: 'application/x-es-module */*'
+              }
+            },
+            response: {
+              statusCode: 200,
+              headers: {
+                'Content-Type': /^application\/javascript/
+              },
+              body: expect.it('to begin with', '(function() {\nvar define = System.amdDefine;\ndefine(["github:components/jquery@2.1.4/jquery.js"]')
+            }
+          });
+        });
+
+        it('should return a 304 status code if ETag matches', function () {
+          var app = getApp();
+
           return expect(app, 'to yield exchange', {
             request: {
               url: '/default.js',
               headers: {
-                accept: 'application/x-es-module */*',
-                'If-None-Match': context.res.get('etag')
+                accept: 'application/x-es-module */*'
               }
             },
-            response: 304
+            response: 200
+          })
+          .then(function (context) {
+            return expect(app, 'to yield exchange', {
+              request: {
+                url: '/default.js',
+                headers: {
+                  accept: 'application/x-es-module */*',
+                  'If-None-Match': context.res.get('etag')
+                }
+              },
+              response: 304
+            });
           });
         });
+      });
+
+      describe('with bundling enabled', function () {
+        it('should compile javascript', function () {
+          return expect(getApp({ bundle: true }), 'to yield exchange', {
+            request: {
+              url: '/default.js',
+              headers: {
+                accept: 'application/x-es-module */*'
+              }
+            },
+            response: {
+              statusCode: 200,
+              headers: {
+                'Content-Type': /^application\/javascript/
+              },
+              body: expect.it('to begin with', 'System.registerDynamic("default.js", []').and('to contain', 'console.log(\'hello world\');\n')
+            }
+          });
+        });
+
+        it('should handle commonjs', function () {
+          return expect(getApp({ bundle: true }), 'to yield exchange', {
+            request: {
+              url: '/lib/stringExport.js',
+              headers: {
+                accept: 'application/x-es-module */*'
+              }
+            },
+            response: {
+              statusCode: 200,
+              headers: {
+                'Content-Type': /^application\/javascript/
+              },
+              body: expect.it('to begin with', 'System.registerDynamic("lib/stringExport.js", []').and('to contain', 'module.exports = \'foo\';\n')
+            }
+          });
+        });
+
+        it('should handle commonjs imports', function () {
+          return expect(getApp({ bundle: true }), 'to yield exchange', {
+            request: {
+              url: '/lib/requireWorking.js',
+              headers: {
+                accept: 'application/x-es-module */*'
+              }
+            },
+            response: {
+              statusCode: 200,
+              headers: {
+                'Content-Type': /^application\/javascript/
+              },
+              body: expect.it('to begin with', 'System.registerDynamic("lib/stringExport.js", []')
+                .and('to contain', 'System.registerDynamic("lib/requireWorking.js", ["lib/stringExport.js"]')
+                .and('to contain', 'var foo = $__require(\'lib/stringExport.js\');\n  module.exports = {foo: foo};\n')
+            }
+          });
+        });
+
+        it('should pass uncompileable errors through to the client', function () {
+          return expect(getApp({ bundle: true }), 'to yield exchange', {
+            request: {
+              url: '/lib/broken.js',
+              headers: {
+                accept: 'application/x-es-module */*'
+              }
+            },
+            response: {
+              errorPassedToNext: /Unterminated String Literal/,
+              statusCode: 500
+            }
+          });
+        });
+
+        it('should error on commonjs imports of broken assets', function () {
+          return expect(getApp({ bundle: true }), 'to yield exchange', {
+            request: {
+              url: '/lib/requireBroken.js',
+              headers: {
+                accept: 'application/x-es-module */*'
+              }
+            },
+            response: {
+              errorPassedToNext: /Unterminated String Literal/,
+              statusCode: 500
+            }
+          });
+        });
+
+        it('should handle jspm modules', function () {
+          return expect(getApp({ bundle: true }), 'to yield exchange', {
+            request: {
+              url: '/jspm_packages/github/components/jquery@2.1.4.js',
+              headers: {
+                accept: 'application/x-es-module */*'
+              }
+            },
+            response: {
+              statusCode: 200,
+              headers: {
+                'Content-Type': /^application\/javascript/
+              },
+              body: expect.it('to begin with', '"bundle";\n(function() {\nvar define = System.amdDefine;')
+            }
+          });
+        });
+
+        it('should handle jspm module imports', function () {
+          return expect(getApp({ bundle: true }), 'to yield exchange', {
+            request: {
+              url: 'lib/requireJquery.js',
+              headers: {
+                accept: 'application/x-es-module */*'
+              }
+            },
+            response: {
+              statusCode: 200,
+              headers: {
+                'Content-Type': /^application\/javascript/
+              },
+              body: expect.it('to begin with', '"bundle";\n(function() {\nvar define = System.amdDefine;')
+                .and('to contain', 'System.registerDynamic("lib/requireJquery.js", ["github:components/jquery@2.1.4.js"]')
+            }
+          });
+        });
+
+        it('should return a 304 status code if ETag matches', function () {
+          var app = getApp({ bundle: true });
+
+          return expect(app, 'to yield exchange', {
+            request: {
+              url: '/default.js',
+              headers: {
+                accept: 'application/x-es-module */*'
+              }
+            },
+            response: 200
+          })
+          .then(function (context) {
+            return expect(app, 'to yield exchange', {
+              request: {
+                url: '/default.js',
+                headers: {
+                  accept: 'application/x-es-module */*',
+                  'If-None-Match': context.res.get('etag')
+                }
+              },
+              response: 304
+            });
+          });
+        });
+
       });
 
     });
