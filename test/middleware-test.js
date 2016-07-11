@@ -438,7 +438,7 @@ function runtests(getApp, description) {
               url: '/config.js'
             },
             response: {
-              body: expect.it('to contain', 'depCache: {"lib/requireWorking.js":["./stringExport"]}')
+              body: expect.it('to contain', 'depCache: {\n  "lib/requireWorking.js": [\n    "./stringExport"\n  ]\n}')
             }
           });
         })
