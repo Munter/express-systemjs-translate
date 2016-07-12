@@ -19,7 +19,8 @@ var getJspmExpressApp = function (options) {
   return express()
     .use(require('../lib/index')(extend({
       serverRoot: root,
-      bundle: false
+      bundle: false,
+      watchFiles: false
     }, options)))
     .use(express.static(root));
 };
@@ -28,7 +29,8 @@ var getJspmConnectApp = function (options) {
   return connect()
     .use(require('../lib/index')(extend({
       serverRoot: root,
-      bundle: false
+      bundle: false,
+      watchFiles: false
     }, options)))
     .use(express.static(root));
 };
@@ -39,7 +41,8 @@ var getBuilderExpressApp = function (options) {
       serverRoot: root,
       baseUrl: root,
       configFile: 'config.js',
-      bundle: false
+      bundle: false,
+      watchFiles: false
     }, options)))
     .use(express.static(root));
 };
@@ -50,7 +53,8 @@ var getBuilderConnectApp = function (options) {
       serverRoot: root,
       baseUrl: root,
       configFile: 'config.js',
-      bundle: false
+      bundle: false,
+      watchFiles: false
     }, options)))
     .use(express.static(root));
 };
