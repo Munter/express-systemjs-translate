@@ -15,11 +15,14 @@
   },
   "keywords": [
     "express",
+    "connect",
     "middleware",
     "systemjs",
     "server",
     "transpile",
     "translate",
+    "compile",
+    "bundle",
     "hook"
   ],
   "author": "Peter Müller <munter@fumle.dk>",
