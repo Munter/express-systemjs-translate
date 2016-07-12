@@ -3,6 +3,7 @@
 var Path = require('path');
 var fs = require('fs');
 var express = require('express');
+var connect = require('connect');
 var proxyquire = require('proxyquire').noPreserveCache();
 var extend = require('extend');
 var sinon = require('sinon');
@@ -14,22 +15,46 @@ var expect = require('unexpected')
 var root = Path.resolve(__dirname, '../fixtures');
 
 
-var getJspmApp = function (options) {
+var getJspmExpressApp = function (options) {
   return express()
     .use(require('../lib/index')(extend({
       serverRoot: root,
-      bundle: false
+      bundle: false,
+      watchFiles: false
     }, options)))
     .use(express.static(root));
 };
 
-var getBuilderApp = function (options) {
+var getJspmConnectApp = function (options) {
+  return connect()
+    .use(require('../lib/index')(extend({
+      serverRoot: root,
+      bundle: false,
+      watchFiles: false
+    }, options)))
+    .use(express.static(root));
+};
+
+var getBuilderExpressApp = function (options) {
   return express()
     .use(proxyquire('../lib/index', { 'jspm': null })(extend({
       serverRoot: root,
       baseUrl: root,
       configFile: 'config.js',
-      bundle: false
+      bundle: false,
+      watchFiles: false
+    }, options)))
+    .use(express.static(root));
+};
+
+var getBuilderConnectApp = function (options) {
+  return express()
+    .use(proxyquire('../lib/index', { 'jspm': null })(extend({
+      serverRoot: root,
+      baseUrl: root,
+      configFile: 'config.js',
+      bundle: false,
+      watchFiles: false
     }, options)))
     .use(express.static(root));
 };
@@ -574,5 +599,8 @@ function runtests(getApp, description) {
   });
 }
 
-runtests(getJspmApp, 'with Jspm module installed');
-runtests(getBuilderApp, 'with systemjs-builder installed');
+runtests(getJspmExpressApp, 'express with Jspm module installed');
+runtests(getBuilderExpressApp, 'express with systemjs-builder installed');
+
+runtests(getJspmConnectApp, 'connect with Jspm module installed');
+runtests(getBuilderConnectApp, 'connect with systemjs-builder installed');
