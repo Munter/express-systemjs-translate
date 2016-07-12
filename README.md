@@ -115,7 +115,9 @@ var middleware = translate({
 
   // Build flags that will be passed on to systemjs-builder.
   // These are only needed if any of your plugins require options
-  buildFlags: {}
+  buildFlags: {
+    sourceMaps: true
+  }
 });
 ```
 
