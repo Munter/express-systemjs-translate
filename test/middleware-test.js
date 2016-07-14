@@ -12,6 +12,23 @@ var expect = require('unexpected')
   .clone()
   .installPlugin(require('unexpected-express'));
 
+expect.addAssertion('<string> to contain inline sourcemap satisfying <any>', function (expect, subject, value) {
+  expect.errorMode = 'nested';
+
+  var base64regex = /(?:[A-Za-z0-9+\/]{4})*(?:[A-Za-z0-9+\/]{2}==|[A-Za-z0-9+\/]{3}=)?/;
+  var sourceMapIdentifier = 'sourceMappingURL=data:application/json;base64,';
+
+  expect(subject, 'to contain', sourceMapIdentifier);
+
+  var encodedSourceMaps = subject.split(sourceMapIdentifier).pop().match(base64regex);
+
+  expect(encodedSourceMaps, 'to have length', 1);
+
+  var sourceMapObject = JSON.parse(new Buffer(encodedSourceMaps[0], 'base64').toString('utf8'));
+
+  return expect(sourceMapObject, 'to satisfy', value);
+});
+
 var root = Path.resolve(__dirname, '../fixtures');
 
 
@@ -94,7 +111,7 @@ function runtests(getApp, description) {
             headers: {
               'Content-Type': 'text/html; charset=UTF-8'
             },
-            body: '<h1>Hello World</h1>\n'
+            body: '<h1>Hello World</h1>\n\n<script src="jspm_packages/system.js"></script>\n<script>\n  System.import(\'lib/requireWorking.js\');\n</script>\n'
           }
         });
       });
@@ -128,7 +145,13 @@ function runtests(getApp, description) {
               headers: {
                 'Content-Type': /^application\/javascript/
               },
-              body: expect.it('to begin with', 'System.registerDynamic([]').and('to contain', 'console.log(\'hello world\');\n')
+              body: expect.it('to begin with', 'System.registerDynamic([]')
+                .and('to contain', 'console.log(\'hello world\');\n')
+                .and('to contain inline sourcemap satisfying', {
+                  sources: [
+                    'default.js'
+                  ]
+                })
             }
           });
         });
@@ -146,7 +169,13 @@ function runtests(getApp, description) {
               headers: {
                 'Content-Type': /^application\/javascript/
               },
-              body: expect.it('to begin with', 'System.registerDynamic([]').and('to contain', 'module.exports = \'foo\';\n')
+              body: expect.it('to begin with', 'System.registerDynamic([]')
+                .and('to contain', 'module.exports = \'foo\';\n')
+                .and('to contain inline sourcemap satisfying', {
+                  sources: [
+                    'lib/stringExport.js'
+                  ]
+                })
             }
           });
         });
@@ -166,6 +195,11 @@ function runtests(getApp, description) {
               },
               body: expect.it('to begin with', 'System.registerDynamic(["lib/stringExport.js"]')
                 .and('to contain', 'var foo = $__require(\'lib/stringExport.js\');\n  module.exports = {foo: foo};\n')
+                .and('to contain inline sourcemap satisfying', {
+                  sources: [
+                    'lib/requireWorking.js'
+                  ]
+                })
             }
           });
         });
@@ -198,7 +232,13 @@ function runtests(getApp, description) {
               headers: {
                 'Content-Type': /^application\/javascript/
               },
-              body: expect.it('to begin with', 'System.registerDynamic(["lib/broken.js"]').and('to contain', 'var foo = $__require(\'lib/broken.js\');\n  module.exports = {foo: foo};\n')
+              body: expect.it('to begin with', 'System.registerDynamic(["lib/broken.js"]')
+                .and('to contain', 'var foo = $__require(\'lib/broken.js\');\n  module.exports = {foo: foo};\n')
+                .and('to contain inline sourcemap satisfying', {
+                  sources: [
+                    'lib/requireBroken.js'
+                  ]
+                })
             }
           });
         });
@@ -217,6 +257,11 @@ function runtests(getApp, description) {
                 'Content-Type': /^application\/javascript/
               },
               body: expect.it('to begin with', '(function() {\nvar define = System.amdDefine;\ndefine(["github:components/jquery@2.1.4/jquery.js"]')
+                .and('to contain inline sourcemap satisfying', {
+                  sources: [
+                    'jspm_packages/github/components/jquery@2.1.4.js'
+                  ]
+                })
             }
           });
         });
@@ -262,7 +307,13 @@ function runtests(getApp, description) {
               headers: {
                 'Content-Type': /^application\/javascript/
               },
-              body: expect.it('to begin with', 'System.registerDynamic("default.js", []').and('to contain', 'console.log(\'hello world\');\n')
+              body: expect.it('to begin with', 'System.registerDynamic("default.js", []')
+                .and('to contain', 'console.log(\'hello world\');\n')
+                .and('to contain inline sourcemap satisfying', {
+                  sources: [
+                    'default.js'
+                  ]
+                })
             }
           });
         });
@@ -280,7 +331,13 @@ function runtests(getApp, description) {
               headers: {
                 'Content-Type': /^application\/javascript/
               },
-              body: expect.it('to begin with', 'System.registerDynamic("lib/stringExport.js", []').and('to contain', 'module.exports = \'foo\';\n')
+              body: expect.it('to begin with', 'System.registerDynamic("lib/stringExport.js", []')
+                .and('to contain', 'module.exports = \'foo\';\n')
+                .and('to contain inline sourcemap satisfying', {
+                  sources: [
+                    'lib/stringExport.js'
+                  ]
+                })
             }
           });
         });
@@ -301,6 +358,12 @@ function runtests(getApp, description) {
               body: expect.it('to begin with', 'System.registerDynamic("lib/stringExport.js", []')
                 .and('to contain', 'System.registerDynamic("lib/requireWorking.js", ["lib/stringExport.js"]')
                 .and('to contain', 'var foo = $__require(\'lib/stringExport.js\');\n  module.exports = {foo: foo};\n')
+                .and('to contain inline sourcemap satisfying', {
+                  sources: [
+                    'lib/stringExport.js',
+                    'lib/requireWorking.js'
+                  ]
+                })
             }
           });
         });

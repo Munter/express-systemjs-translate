@@ -1,0 +1,43 @@
+<h1>Possible sourcemap problem</h1>
+
+<p>This page loads two primary modules <a href="lib/external.js">lib/external.js</a> and <a href="lib/inlined.js">lib/inlined.js</a></p>
+
+<p>external.js points at an external source map <a href="lib/external.js.map">lib/external.js.map</a></p>
+<p>inlined.js has it's source map <a href="lib/inlined.js.map">lib/inlined.js.map</a> inlined as a base64 data-url</p>
+
+<p>Both files source maps define a file, either external.js or inlined.js, which has different content that the served file. This is the original file content. A middleware has intercepted the request and done an on the fly bundling.</p>
+
+<p>I expect the source maps to help the browser make the original content available in the developer tools sources tab under the served file name.</p>
+
+<p>In the case of an external source map a new entry appears in the sources tab called "external.js [sm]" alongside exernal.js. The [sm]-file contains the source maps delivered source, while the non-[sm]-file contains the content as delivered on the wire</p>
+
+<img src="external.png" alt="">
+<img src="external-sm.png" alt="">
+
+<p>In the case of the inlined source map no similar [sw]-file appears in the sources tab. And inlined.js shows the source as delivered on the wire</p>
+
+<img src="inlined.png" alt="">
+
+<p>This page itself recreates the issue, to you can inspect the source tab yourself.</p>
+
+<hr>
+
+<p>I expected to see the original source of inlined.js from the source maps delivered source to be available in the devloper tools sources tab.</p>
+
+<p>Is this a bug in Chrome?</p>
+
+<p>I'm running Chrome 51.0.2704.106 (64-bit) on OSX</p>
+
+<p>Please contact me on twitter <a href="https://twitter.com/_munter_">@_munter_</a> or in this github issue: <a href="https://github.com/Munter/express-systemjs-translate/issues/172">https://github.com/Munter/express-systemjs-translate/issues/172</a></p>
+
+<hr>
+
+<p>Firefox: no original sources from source maps are shown at all</p>
+<p>Opera: no original sources from source maps are shown at all</p>
+
+
+<script src="jspm_packages/system.js"></script>
+<script>
+  System.import('lib/external.js');
+  System.import('lib/inlined.js');
+</script>
