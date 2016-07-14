@@ -1,0 +1,15 @@
+{
+    "version": 3,
+    "sources": [
+        "lib/stringExport.js",
+        "lib/inlined.js"
+    ],
+    "names": [],
+    "mappings": ";;AACI;AAAY;AAAe;;;AADiF;;;;ACC5G;AAAY;AAAe;;;;AADwG",
+    "file": "output.js",
+    "sourceRoot": "/",
+    "sourcesContent": [
+        "module.exports = 'foo';\n",
+        "var foo = require('./stringExport');\n\nmodule.exports = {\n  foo: foo\n};\n"
+    ]
+}
