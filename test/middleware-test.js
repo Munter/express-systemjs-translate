@@ -111,7 +111,7 @@ function runtests(getApp, description) {
             headers: {
               'Content-Type': 'text/html; charset=UTF-8'
             },
-            body: '<h1>Hello World</h1>\n'
+            body: '<h1>Hello World</h1>\n\n<script src="jspm_packages/system.js"></script>\n<script>\n  System.import(\'lib/requireWorking.js\');\n</script>\n'
           }
         });
       });
