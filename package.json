@@ -5,6 +5,7 @@
   "main": "lib/index.js",
   "scripts": {
     "start": "node server/manualtest.js",
+    "preversion": "npm run test",
     "lint": "jshint .",
     "test": "mocha && npm run lint",
     "travis": "npm run lint && npm run coverage",
