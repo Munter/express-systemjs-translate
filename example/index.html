@@ -1,4 +1,6 @@
-<h1>Possible sourcemap problem</h1>
+<h1>Possible sourcemap problem <strong>(solved)</strong></h1>
+
+<p><strong>EDIT july 16th 2016: Problem solved. No errors in any browsers tested. The problem was a bad standard behavior in a source map library that stripped the sourcesContent property of source maps when inlining them. Chrome, Opera, Firefox all show the expected original source.</strong></p>
 
 <p>This page loads two primary modules <a href="lib/external.js">lib/external.js</a> and <a href="lib/inlined.js">lib/inlined.js</a></p>
 
