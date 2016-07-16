@@ -312,6 +312,9 @@ function runtests(getApp, description) {
                 .and('to contain inline sourcemap satisfying', {
                   sources: [
                     'default.js'
+                  ],
+                  sourcesContent: [
+                    'console.log(\'hello world\');\n'
                   ]
                 })
             }
@@ -336,6 +339,9 @@ function runtests(getApp, description) {
                 .and('to contain inline sourcemap satisfying', {
                   sources: [
                     'lib/stringExport.js'
+                  ],
+                  sourcesContent: [
+                    'module.exports = \'foo\';\n'
                   ]
                 })
             }
@@ -362,6 +368,10 @@ function runtests(getApp, description) {
                   sources: [
                     'lib/stringExport.js',
                     'lib/requireWorking.js'
+                  ],
+                  sourcesContent: [
+                    null,
+                    'var foo = require(\'./stringExport\');\n\nmodule.exports = {\n  foo: foo\n};\n'
                   ]
                 })
             }
