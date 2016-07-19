@@ -30,7 +30,9 @@ var express = require('express');
 var translate = require('express-systemjs-translate');
 
 var app = express()
-  .use(translate())
+  .use(translate({
+    serverRoot: 'path/to/webroot'
+  }))
   .use(express.static('path/to/webroot'));
 
 app.listen(3000);
@@ -44,7 +46,8 @@ var translate = require('express-systemjs-translate');
 
 var app = express()
   .use(translate({
-    baseUrl: 'path/to/webroot',
+    serverRoot: 'path/to/webroot',
+    baseUrl: 'path/to/systemjs/baseURL',
     configFile: 'relative/path/from/baseUrl/to/config.js'
   }))
   .use(express.static('path/to/webroot'));
@@ -83,17 +86,17 @@ The translate middelware takes a few options to adapt to your project setup. Thi
 var translate = require('express-systemjs-translate');
 
 var middleware = translate({
-  // Server root. Defaults to current working directory, as most usages will be through `npm start`
-  // This setting is not in active use at the moment
-  serverRoot: process.cwd(),
+  // REQUIRED: Server root. This should be identical to to root you give any static middleware down the chain
+  // Defaults to current working directory, as most usages will be through `npm start`
+  serverRoot: 'path/to/webroot', // REQUIRED
 
   // SystemJS baseURL.
   // Only needed if you are using systemjs-builder directly
   // If you use jspm the configuration will be automatic
-  // Defaults to `process.cwd()` if not provided
-  baseUrl: process.cwd(),
+  // Defaults to options.serverRoot if not provided
+  baseUrl: 'path/to/webroot',
 
-  // Path to SystemJS config file. Path should be relative to SystemJS baseURL.
+  // Path to SystemJS config file.
   // Only needed if you are using systemjs-builder directly
   // If you use jspm the configuration will be automatic
   // Defaults to `system.config.js` if not provided
