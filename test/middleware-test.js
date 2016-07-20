@@ -154,6 +154,23 @@ function runtests(getApp, description) {
     });
 
     describe('when requesting files with the systemjs accepts header', function () {
+
+      it.skip('should respond 404 when requesting a non-existing file', function () {
+
+        return expect(getApp(), 'to yield exchange', {
+          request: {
+            url: '/nonexist.js',
+            headers: {
+              accept: 'application/x-es-module */*'
+            }
+          },
+          response: {
+            statusCode: 404,
+            body: 'foo'
+          }
+        });
+      });
+
       describe('with bundling disabled', function () {
         it('should compile javascript', function () {
           return expect(getApp(), 'to yield exchange', {
