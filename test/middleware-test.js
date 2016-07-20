@@ -31,8 +31,7 @@ expect.addAssertion('<string> to contain inline sourcemap satisfying <any>', fun
 
 var getJspmExpressApp = function (options) {
   return express()
-    .use(require('../lib/index')(extend({
-      serverRoot: 'fixtures',
+    .use(require('../lib/index')('fixtures', extend({
       bundle: false,
       watchFiles: false
     }, options)))
@@ -41,8 +40,7 @@ var getJspmExpressApp = function (options) {
 
 var getJspmConnectApp = function (options) {
   return connect()
-    .use(require('../lib/index')(extend({
-      serverRoot: 'fixtures',
+    .use(require('../lib/index')('fixtures', extend({
       bundle: false,
       watchFiles: false
     }, options)))
@@ -51,8 +49,7 @@ var getJspmConnectApp = function (options) {
 
 var getBuilderExpressApp = function (options) {
   return express()
-    .use(proxyquire('../lib/index', { 'jspm': null })(extend({
-      serverRoot: 'fixtures',
+    .use(proxyquire('../lib/index', { 'jspm': null })('fixtures', extend({
       baseUrl: 'fixtures',
       configFile: 'fixtures/config.js',
       bundle: false,
@@ -63,8 +60,7 @@ var getBuilderExpressApp = function (options) {
 
 var getBuilderConnectApp = function (options) {
   return express()
-    .use(proxyquire('../lib/index', { 'jspm': null })(extend({
-      serverRoot: 'fixtures',
+    .use(proxyquire('../lib/index', { 'jspm': null })('fixtures', extend({
       baseUrl: 'fixtures',
       configFile: 'fixtures/config.js',
       bundle: false,
@@ -73,36 +69,27 @@ var getBuilderConnectApp = function (options) {
     .use(express.static('fixtures'));
 };
 
-it('should throw when no configuration is passed', function () {
-  return expect(require('../lib/index'), 'to throw', /Missing options. A configuration object must be passed as the first argument/);
-});
-
 it('should throw when serverRoot configuration is not configured', function () {
   return expect(function () {
-    return require('../lib/index')({});
-  }, 'to throw', /Missing option: serverRoot/);
+    return require('../lib/index')();
+  }, 'to throw', /Missing first argument: serverRoot/);
 });
 
 it('should throw when neither jspm or systemjs-builder are installed', function () {
   return expect(function () {
-    proxyquire('../lib/index', { 'jspm': null, 'systemjs-builder': null })({
-      serverRoot: 'fixtures'
-    });
+    proxyquire('../lib/index', { 'jspm': null, 'systemjs-builder': null })('fixtures');
   }, 'to throw', /jspm and systemjs-builder packages not found/);
 });
 
 it('should throw with jspm when baseUrl is not inside serverRoot', function () {
   return expect(function () {
-    return require('../lib/index')({
-      serverRoot: 'fixtures/lib'
-    });
+    return require('../lib/index')('fixtures/lib');
   }, 'to throw', /serverRoot is not a parent directory for your jspm configured baseUrl/);
 });
 
 it('should throw with systemjs-builder when baseUrl is not inside serverRoot', function () {
   return expect(function () {
-    proxyquire('../lib/index', { 'jspm': null })({
-      serverRoot: 'fixtures',
+    proxyquire('../lib/index', { 'jspm': null })('fixtures', {
       baseUrl: '.',
       configFile: 'fixtures/config.js'
     });
@@ -111,8 +98,7 @@ it('should throw with systemjs-builder when baseUrl is not inside serverRoot', f
 
 it('should throw with systemjs-builder when configFile is not inside baseUrl', function () {
   return expect(function () {
-    proxyquire('../lib/index', { 'jspm': null })({
-      serverRoot: 'fixtures',
+    proxyquire('../lib/index', { 'jspm': null })('fixtures', {
       baseUrl: 'fixtures/lib',
       configFile: 'fixtures/config.js'
     });

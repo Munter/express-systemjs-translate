@@ -13,8 +13,7 @@ before(function (done) {
     open: false,
     logLevel: 'silent',
     middleware: [
-      translate({
-        serverRoot: 'fixtures',
+      translate('fixtures', {
         bundle: false
       })
     ]

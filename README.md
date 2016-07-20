@@ -30,9 +30,7 @@ var express = require('express');
 var translate = require('express-systemjs-translate');
 
 var app = express()
-  .use(translate({
-    serverRoot: 'path/to/webroot'
-  }))
+  .use(translate('path/to/webroot'))
   .use(express.static('path/to/webroot'));
 
 app.listen(3000);
@@ -45,8 +43,7 @@ var express = require('express');
 var translate = require('express-systemjs-translate');
 
 var app = express()
-  .use(translate({
-    serverRoot: 'path/to/webroot',
+  .use(translate('path/to/webroot', {
     baseUrl: 'path/to/systemjs/baseURL',
     configFile: 'relative/path/from/baseUrl/to/config.js'
   }))
@@ -83,24 +80,23 @@ Midleware Configuration
 The translate middelware takes a few options to adapt to your project setup. This is the full configuration API:
 
 ```js
-var translate = require('express-systemjs-translate');
+var translate = require('express-systemjs-translate');s
 
-var middleware = translate({
-  // REQUIRED: Server root. This should be identical to to root you give any static middleware down the chain
-  // Defaults to current working directory, as most usages will be through `npm start`
-  serverRoot: 'path/to/webroot', // REQUIRED
+// REQUIRED: First argument is your web server root
+// This should be identical to the root you give any static middleware down the chain
 
+var middleware = translate('path/to/webroot', {
   // SystemJS baseURL.
   // Only needed if you are using systemjs-builder directly
   // If you use jspm the configuration will be automatic
-  // Defaults to options.serverRoot if not provided
+  // Defaults to value of server root argument if not provided
   baseUrl: 'path/to/webroot',
 
   // Path to SystemJS config file.
   // Only needed if you are using systemjs-builder directly
   // If you use jspm the configuration will be automatic
-  // Defaults to `system.config.js` if not provided
-  configFile: 'system.config.js',
+  // Defaults to `system.config.js` in your server root argument if not provided
+  configFile: 'path/to/webroot/system.config.js',
 
   // Bundle module dependencies.
   // Dependencies will be translated and prepended to the response
