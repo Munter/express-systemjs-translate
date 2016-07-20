@@ -216,8 +216,8 @@ function runtests(getApp, description) {
               headers: {
                 'Content-Type': /^application\/javascript/
               },
-              body: expect.it('to begin with', 'System.registerDynamic(["lib/stringExport.js"]')
-                .and('to contain', 'var foo = $__require(\'lib/stringExport.js\');\n  module.exports = {foo: foo};\n')
+              body: expect.it('to begin with', 'System.registerDynamic(["./stringExport"]')
+                .and('to contain', 'var foo = $__require(\'./stringExport\');\n  module.exports = {foo: foo};\n')
                 .and('to contain inline sourcemap satisfying', {
                   sources: [
                     'lib/requireWorking.js'
@@ -255,8 +255,8 @@ function runtests(getApp, description) {
               headers: {
                 'Content-Type': /^application\/javascript/
               },
-              body: expect.it('to begin with', 'System.registerDynamic(["lib/broken.js"]')
-                .and('to contain', 'var foo = $__require(\'lib/broken.js\');\n  module.exports = {foo: foo};\n')
+              body: expect.it('to begin with', 'System.registerDynamic(["./broken"]')
+                .and('to contain', 'var foo = $__require(\'./broken\');\n  module.exports = {foo: foo};\n')
                 .and('to contain inline sourcemap satisfying', {
                   sources: [
                     'lib/requireBroken.js'
@@ -269,7 +269,7 @@ function runtests(getApp, description) {
         it('should handle jspm modules', function () {
           return expect(getApp(), 'to yield exchange', {
             request: {
-              url: '/jspm_packages/github/components/jquery@2.1.4.js',
+              url: '/jspm_packages/npm/rgb-hex@1.0.0.js',
               headers: {
                 accept: 'application/x-es-module */*'
               }
@@ -279,10 +279,10 @@ function runtests(getApp, description) {
               headers: {
                 'Content-Type': /^application\/javascript/
               },
-              body: expect.it('to begin with', '(function() {\nvar define = System.amdDefine;\ndefine(["github:components/jquery@2.1.4/jquery.js"]')
+              body: expect.it('to begin with', 'System.registerDynamic(["npm:rgb-hex@1.0.0/index"]')
                 .and('to contain inline sourcemap satisfying', {
                   sources: [
-                    'jspm_packages/github/components/jquery@2.1.4.js'
+                    'jspm_packages/npm/rgb-hex@1.0.0.js'
                   ]
                 })
             }
@@ -385,8 +385,8 @@ function runtests(getApp, description) {
                 'Content-Type': /^application\/javascript/
               },
               body: expect.it('to begin with', 'System.registerDynamic("lib/stringExport.js", []')
-                .and('to contain', 'System.registerDynamic("lib/requireWorking.js", ["lib/stringExport.js"]')
-                .and('to contain', 'var foo = $__require(\'lib/stringExport.js\');\n  module.exports = {foo: foo};\n')
+                .and('to contain', 'System.registerDynamic("lib/requireWorking.js", ["./stringExport"]')
+                .and('to contain', 'var foo = $__require(\'./stringExport\');\n  module.exports = {foo: foo};\n')
                 .and('to contain inline sourcemap satisfying', {
                   sources: [
                     'lib/stringExport.js',
@@ -434,7 +434,7 @@ function runtests(getApp, description) {
         it('should handle jspm modules', function () {
           return expect(getApp({ bundle: true }), 'to yield exchange', {
             request: {
-              url: '/jspm_packages/github/components/jquery@2.1.4.js',
+              url: '/jspm_packages/npm/rgb-hex@1.0.0.js',
               headers: {
                 accept: 'application/x-es-module */*'
               }
@@ -444,7 +444,17 @@ function runtests(getApp, description) {
               headers: {
                 'Content-Type': /^application\/javascript/
               },
-              body: expect.it('to begin with', '"bundle";\n(function() {\nvar define = System.amdDefine;')
+              body: expect.it('to begin with', 'System.registerDynamic("npm:rgb-hex@1.0.0/index.js"')
+                .and('to contain inline sourcemap satisfying', {
+                  sources: [
+                    'jspm_packages/npm/rgb-hex@1.0.0/index.js',
+                    'jspm_packages/npm/rgb-hex@1.0.0.js'
+                  ],
+                  sourcesContent: [
+                    null,
+                    'module.exports = require("npm:rgb-hex@1.0.0/index");'
+                  ]
+                })
             }
           });
         });
@@ -452,7 +462,7 @@ function runtests(getApp, description) {
         it('should handle jspm module imports', function () {
           return expect(getApp({ bundle: true }), 'to yield exchange', {
             request: {
-              url: 'lib/requireJquery.js',
+              url: 'lib/requireRgbhex.js',
               headers: {
                 accept: 'application/x-es-module */*'
               }
@@ -462,8 +472,20 @@ function runtests(getApp, description) {
               headers: {
                 'Content-Type': /^application\/javascript/
               },
-              body: expect.it('to begin with', '"bundle";\n(function() {\nvar define = System.amdDefine;')
-                .and('to contain', 'System.registerDynamic("lib/requireJquery.js", ["github:components/jquery@2.1.4.js"]')
+              body: expect.it('to begin with', 'System.registerDynamic("npm:rgb-hex@1.0.0/index.js"')
+                .and('to contain', 'System.registerDynamic("lib/requireRgbhex.js", ["rgb-hex"]')
+                .and('to contain inline sourcemap satisfying', {
+                  sources: [
+                    'jspm_packages/npm/rgb-hex@1.0.0/index.js',
+                    'jspm_packages/npm/rgb-hex@1.0.0.js',
+                    'lib/requireRgbhex.js'
+                  ],
+                  sourcesContent: [
+                    null,
+                    null,
+                    'var reghex = require(\'rgb-hex\');\n\nmodule.exports = rgbhex;\n'
+                  ]
+                })
             }
           });
         });

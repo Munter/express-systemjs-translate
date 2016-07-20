@@ -59,14 +59,11 @@
     "lodash.difference": "^4.3.0"
   },
   "jspm": {
-    "configFiles": {
-      "jspm": "fixtures/config.js"
-    },
     "directories": {
       "baseURL": "fixtures"
     },
     "dependencies": {
-      "jquery": "github:components/jquery@2.1.4"
+      "rgb-hex": "npm:rgb-hex@^1.0.0"
     },
     "devDependencies": {
       "babel": "npm:babel-core@^5.8.24",
