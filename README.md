@@ -80,7 +80,7 @@ Midleware Configuration
 The translate middelware takes a few options to adapt to your project setup. This is the full configuration API:
 
 ```js
-var translate = require('express-systemjs-translate');s
+var translate = require('express-systemjs-translate');
 
 // REQUIRED: First argument is your web server root
 // This should be identical to the root you give any static middleware down the chain
