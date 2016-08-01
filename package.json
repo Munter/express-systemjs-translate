@@ -42,7 +42,7 @@
     "jshint": "^2.8.0",
     "jspm": "^0.16.39",
     "messy": "^6.5.0",
-    "mocha": "^2.2.5",
+    "mocha": "^3.0.0",
     "mocha-lcov-reporter": "^1.2.0",
     "proxyquire": "^1.7.10",
     "sinon": "^1.17.4",
