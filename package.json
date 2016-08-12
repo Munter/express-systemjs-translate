@@ -8,7 +8,7 @@
     "preversion": "npm run test",
     "lint": "jshint .",
     "test": "mocha && npm run lint",
-    "travis": "npm run lint && npm run coverage",
+    "travis": "npm run coverage && npm run lint",
     "coverage": "istanbul cover ./node_modules/mocha/bin/_mocha"
   },
   "repository": {
