@@ -50,4 +50,3 @@ describe('browsersync middleware', function () {
     });
   });
 });
-

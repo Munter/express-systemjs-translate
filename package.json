@@ -40,13 +40,13 @@
     "express": "^4.13.1",
     "istanbul": "^0.4.4",
     "jshint": "^2.8.0",
-    "jspm": "0.16.39",
+    "jspm": "^0.16.42",
     "messy": "^6.5.0",
     "mocha": "^2.2.5",
     "mocha-lcov-reporter": "^1.2.0",
     "proxyquire": "^1.7.10",
     "sinon": "^1.17.4",
-    "systemjs-builder": "0.15.23",
+    "systemjs-builder": "^0.15.25",
     "unexpected": "^10.14.2",
     "unexpected-express": "^8.2.0",
     "unexpected-http": "^5.5.0"
@@ -56,6 +56,7 @@
     "extend": "^3.0.0",
     "gaze": "^1.1.0",
     "inline-source-map-comment": "^1.0.5",
+    "jspm": "0.16.42",
     "lodash.difference": "^4.3.0",
     "parent-require": "1.0.0"
   },

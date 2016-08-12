@@ -269,7 +269,7 @@ function runtests(getApp, description) {
               }
             },
             response: {
-              errorPassedToNext: /Unterminated String Literal/,
+              errorPassedToNext: /Unterminated String Literal|Unterminated string constant/,
               statusCode: 500
             }
           });
@@ -363,7 +363,7 @@ function runtests(getApp, description) {
               headers: {
                 'Content-Type': /^application\/javascript/
               },
-              body: expect.it('to begin with', 'System.registerDynamic("default.js", []')
+              body: expect.it('to begin with', 'System.registerDynamic("default.js", []').or('to begin with', 'System.registerDynamic(\'default.js\', []')
                 .and('to contain', 'console.log(\'hello world\');\n')
                 .and('to contain inline sourcemap satisfying', {
                   sources: [
@@ -443,7 +443,7 @@ function runtests(getApp, description) {
               }
             },
             response: {
-              errorPassedToNext: /Unterminated String Literal/,
+              errorPassedToNext: /Unterminated String Literal|Unterminated string constant/,
               statusCode: 500
             }
           });
@@ -458,7 +458,7 @@ function runtests(getApp, description) {
               }
             },
             response: {
-              errorPassedToNext: /Unterminated String Literal/,
+              errorPassedToNext: /Unterminated String Literal|Unterminated string constant/,
               statusCode: 500
             }
           });
