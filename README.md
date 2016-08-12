@@ -52,6 +52,13 @@ var app = express()
 app.listen(3000);
 ```
 
+The `configFile` property can also be specified as an array of strings, which
+will be loaded as configuration files in the given order.
+
+This is useful if your configuration is spread across multiple `System.config`
+calls in different scripts.
+
+
 SystemJS Configuration
 ----------------------
 
@@ -74,10 +81,10 @@ System.config({
 });
 ```
 
-Midleware Configuration
------------------------
+Middleware Configuration
+------------------------
 
-The translate middelware takes a few options to adapt to your project setup. This is the full configuration API:
+The translate middleware takes a few options to adapt to your project setup. This is the full configuration API:
 
 ```js
 var translate = require('express-systemjs-translate');
