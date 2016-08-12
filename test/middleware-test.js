@@ -72,7 +72,7 @@ function getBuilderExpressApp(options) {
       watchFiles: false
     }, options)))
     .use(express.static('fixtures'));
-};
+}
 
 var getBuilderConnectApp = function (options) {
   return express()
