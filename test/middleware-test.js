@@ -7,6 +7,7 @@ var connect = require('connect');
 var proxyquire = require('proxyquire').noPreserveCache();
 var extend = require('extend');
 var sinon = require('sinon');
+var parentRequire = require('parent-require');
 
 var expect = require('unexpected')
   .clone()
@@ -47,9 +48,24 @@ var getJspmConnectApp = function (options) {
     .use(express.static('fixtures'));
 };
 
-var getBuilderExpressApp = function (options) {
+// Helper for proxyquiring with certain modules mocked out via parent-require:
+function getMiddlewareWithModulesMissing(missingModules) {
+  return proxyquire('../lib/index', {
+    'parent-require': function (path) {
+      if (missingModules.indexOf(path) === -1) {
+        return parentRequire.apply(this, arguments);
+      } else {
+        var err = new Error('Cannot find module \'' + path + '\'');
+        err.code = 'MODULE_NOT_FOUND';
+        throw err;
+      }
+    }
+  });
+}
+
+function getBuilderExpressApp(options) {
   return express()
-    .use(proxyquire('../lib/index', { 'jspm': null })('fixtures', extend({
+    .use(getMiddlewareWithModulesMissing(['jspm'])('fixtures', extend({
       baseUrl: 'fixtures',
       configFile: 'fixtures/config.js',
       bundle: false,
@@ -60,7 +76,7 @@ var getBuilderExpressApp = function (options) {
 
 var getBuilderConnectApp = function (options) {
   return express()
-    .use(proxyquire('../lib/index', { 'jspm': null })('fixtures', extend({
+    .use(getMiddlewareWithModulesMissing(['jspm'])('fixtures', extend({
       baseUrl: 'fixtures',
       configFile: 'fixtures/config.js',
       bundle: false,
@@ -77,7 +93,7 @@ it('should throw when serverRoot configuration is not configured', function () {
 
 it('should throw when neither jspm or systemjs-builder are installed', function () {
   return expect(function () {
-    proxyquire('../lib/index', { 'jspm': null, 'systemjs-builder': null })('fixtures');
+    getMiddlewareWithModulesMissing(['jspm', 'systemjs-builder'])('fixtures');
   }, 'to throw', /jspm and systemjs-builder packages not found/);
 });
 
@@ -89,7 +105,7 @@ it('should throw with jspm when baseUrl is not inside serverRoot', function () {
 
 it('should throw with systemjs-builder when baseUrl is not inside serverRoot', function () {
   return expect(function () {
-    proxyquire('../lib/index', { 'jspm': null })('fixtures', {
+    getMiddlewareWithModulesMissing(['jspm'])('fixtures', {
       baseUrl: '.',
       configFile: 'fixtures/config.js'
     });
@@ -98,7 +114,7 @@ it('should throw with systemjs-builder when baseUrl is not inside serverRoot', f
 
 it('should throw with systemjs-builder when configFile is not inside baseUrl', function () {
   return expect(function () {
-    proxyquire('../lib/index', { 'jspm': null })('fixtures', {
+    getMiddlewareWithModulesMissing(['jspm'])('fixtures', {
       baseUrl: 'fixtures/lib',
       configFile: 'fixtures/config.js'
     });
