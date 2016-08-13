@@ -30,23 +30,23 @@ expect.addAssertion('<string> to contain inline sourcemap satisfying <any>', fun
   return expect(sourceMapObject, 'to satisfy', value);
 });
 
-var getJspmExpressApp = function (options) {
+function getJspmExpressApp(options) {
   return express()
     .use(require('../lib/index')('fixtures', extend({
       bundle: false,
       watchFiles: false
     }, options)))
     .use(express.static('fixtures'));
-};
+}
 
-var getJspmConnectApp = function (options) {
+function getJspmConnectApp(options) {
   return connect()
     .use(require('../lib/index')('fixtures', extend({
       bundle: false,
       watchFiles: false
     }, options)))
     .use(express.static('fixtures'));
-};
+}
 
 // Helper for proxyquiring with certain modules mocked out via parent-require:
 function getMiddlewareWithModulesMissing(missingModules) {
@@ -74,7 +74,7 @@ function getBuilderExpressApp(options) {
     .use(express.static('fixtures'));
 }
 
-var getBuilderConnectApp = function (options) {
+function getBuilderConnectApp(options) {
   return express()
     .use(getMiddlewareWithModulesMissing(['jspm'])('fixtures', extend({
       baseUrl: 'fixtures',
@@ -83,7 +83,7 @@ var getBuilderConnectApp = function (options) {
       watchFiles: false
     }, options)))
     .use(express.static('fixtures'));
-};
+}
 
 it('should throw when serverRoot configuration is not configured', function () {
   return expect(function () {
@@ -755,3 +755,29 @@ runtests(getBuilderExpressApp, 'express with systemjs-builder installed');
 
 runtests(getJspmConnectApp, 'connect with Jspm module installed');
 runtests(getBuilderConnectApp, 'connect with systemjs-builder installed');
+
+[getBuilderConnectApp, getBuilderExpressApp].forEach(function (getApp) {
+  describe('when using ' + getApp.name, function () {
+    it('should support multiple config files', function () {
+      var app = getBuilderExpressApp({
+        configFile: [
+          'fixtures/config.js',
+          'fixtures/config2.js'
+        ]
+      });
+
+      return expect(app, 'to yield exchange', {
+        request: {
+          url: '/default2.js',
+          headers: {
+            accept: 'application/x-es-module */*'
+          }
+        },
+        response: {
+          statusCode: 200,
+          body: expect.it('to begin with', 'System.registerDynamic').and('to contain', 'module.exports = \'foo\'')
+        }
+      });
+    });
+  });
+});
