@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node server/manualtest.js",
     "preversion": "npm run test",
-    "lint": "jshint .",
+    "lint": "eslint .",
     "test": "mocha && npm run lint",
     "travis": "npm run coverage && npm run lint",
     "coverage": "istanbul cover ./node_modules/mocha/bin/_mocha"
@@ -41,7 +41,6 @@
     "eslint-config-onelint": "1.1.0",
     "express": "^4.13.1",
     "istanbul": "^0.4.4",
-    "jshint": "^2.8.0",
     "jspm": "^0.16.42",
     "messy": "^6.5.0",
     "mocha": "^3.0.2",
