@@ -31,6 +31,17 @@ expect.addAssertion('<string> to contain inline sourcemap satisfying <any>', fun
   return expect(sourceMapObject, 'to satisfy', value);
 });
 
+// First try to see if the assertion matches when all singlequotes have been replaced with double quotes,
+// then try with all doublequotes replaced with singlequotes.
+// This is an attempt to be immune to systemjs-builder switching back and forth in the generated bundles.
+expect.addAssertion('<string> with either quoting style <assertion>', function (expect, subject) {
+  return expect.withError(function () {
+    return expect.shift(subject.replace(/'/g, '"'));
+  }, function (e) {
+    return expect.shift(subject.replace(/"/g, "'"));
+  });
+});
+
 function getJspmExpressApp(options) {
   return express()
     .use(require('../lib/index')('fixtures', extend({
@@ -250,8 +261,9 @@ function runtests(getApp, description) {
               headers: {
                 'Content-Type': /^application\/javascript/
               },
-              body: expect.it('to begin with', 'System.registerDynamic(["./stringExport"]')
-                .and('to contain', 'var foo = $__require(\'./stringExport\');\n  module.exports = {foo: foo};\n')
+              body: expect.it('with either quoting style to begin with', 'System.registerDynamic(["./stringExport"]')
+                .and('to contain', 'var foo = $__require(\'./stringExport\');\n')
+                .and('to match', /module\.exports = {\s*foo: foo\s*};\n/)
                 .and('to contain inline sourcemap satisfying', {
                   sources: [
                     'lib/requireWorking.js'
@@ -289,8 +301,9 @@ function runtests(getApp, description) {
               headers: {
                 'Content-Type': /^application\/javascript/
               },
-              body: expect.it('to begin with', 'System.registerDynamic(["./broken"]')
-                .and('to contain', 'var foo = $__require(\'./broken\');\n  module.exports = {foo: foo};\n')
+              body: expect.it('with either quoting style to begin with', 'System.registerDynamic(["./broken"]')
+                .and('to contain', "var foo = $__require('./broken');")
+                .and('to match', /module\.exports = {\s*foo: foo\s*};\n/)
                 .and('to contain inline sourcemap satisfying', {
                   sources: [
                     'lib/requireBroken.js'
@@ -391,7 +404,7 @@ function runtests(getApp, description) {
               headers: {
                 'Content-Type': /^application\/javascript/
               },
-              body: expect.it('to begin with', 'System.registerDynamic("lib/stringExport.js", []')
+              body: expect.it('with either quoting style to begin with', 'System.registerDynamic("lib/stringExport.js", []')
                 .and('to contain', 'module.exports = \'foo\';\n')
                 .and('to contain inline sourcemap satisfying', {
                   sources: [
@@ -418,9 +431,10 @@ function runtests(getApp, description) {
               headers: {
                 'Content-Type': /^application\/javascript/
               },
-              body: expect.it('to begin with', 'System.registerDynamic("lib/stringExport.js", []')
-                .and('to contain', 'System.registerDynamic("lib/requireWorking.js", ["./stringExport"]')
-                .and('to contain', 'var foo = $__require(\'./stringExport\');\n  module.exports = {foo: foo};\n')
+              body: expect.it('with either quoting style to begin with', 'System.registerDynamic("lib/stringExport.js", []')
+                .and('with either quoting style to contain', 'System.registerDynamic("lib/requireWorking.js", ["./stringExport"]')
+                .and('to contain', "var foo = $__require('./stringExport');")
+                .and('to match', /module\.exports = {\s*foo: foo\s*};\n/)
                 .and('to contain inline sourcemap satisfying', {
                   sources: [
                     'lib/stringExport.js',
@@ -478,7 +492,7 @@ function runtests(getApp, description) {
               headers: {
                 'Content-Type': /^application\/javascript/
               },
-              body: expect.it('to begin with', 'System.registerDynamic("npm:rgb-hex@1.0.0/index.js"')
+              body: expect.it('with either quoting style to begin with', 'System.registerDynamic("npm:rgb-hex@1.0.0/index.js"')
                 .and('to contain inline sourcemap satisfying', {
                   sources: [
                     'jspm_packages/npm/rgb-hex@1.0.0/index.js',
@@ -506,8 +520,8 @@ function runtests(getApp, description) {
               headers: {
                 'Content-Type': /^application\/javascript/
               },
-              body: expect.it('to begin with', 'System.registerDynamic("npm:rgb-hex@1.0.0/index.js"')
-                .and('to contain', 'System.registerDynamic("lib/requireRgbhex.js", ["rgb-hex"]')
+              body: expect.it('with either quoting style to begin with', 'System.registerDynamic("npm:rgb-hex@1.0.0/index.js"')
+                .and('with either quoting style to contain', 'System.registerDynamic("lib/requireRgbhex.js", ["rgb-hex"]')
                 .and('to contain inline sourcemap satisfying', {
                   sources: [
                     'jspm_packages/npm/rgb-hex@1.0.0/index.js',
