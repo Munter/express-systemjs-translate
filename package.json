@@ -42,7 +42,6 @@
     "express": "^4.13.1",
     "istanbul": "^0.4.4",
     "jspm": "^0.16.42",
-    "messy": "^6.5.0",
     "mocha": "^3.0.2",
     "mocha-lcov-reporter": "^1.2.0",
     "proxyquire": "^1.7.10",
