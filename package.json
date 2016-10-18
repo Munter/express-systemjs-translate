@@ -34,7 +34,7 @@
   },
   "homepage": "https://github.com/Munter/express-systemjs-translate",
   "devDependencies": {
-    "browser-sync": "^2.13.0",
+    "browser-sync": "^2.17.2",
     "connect": "^3.4.1",
     "coveralls": "^2.11.11",
     "eslint": "^2.13.1",
