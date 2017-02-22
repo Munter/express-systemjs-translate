@@ -37,7 +37,7 @@
     "browser-sync": "^2.18.2",
     "connect": "^3.4.1",
     "coveralls": "^2.11.11",
-    "eslint": "^3.8.1",
+    "eslint": "^3.16.1",
     "eslint-config-onelint": "1.2.0",
     "express": "^4.13.1",
     "istanbul": "^0.4.4",
