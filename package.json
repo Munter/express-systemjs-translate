@@ -56,7 +56,7 @@
     "extend": "^3.0.0",
     "gaze": "^1.1.0",
     "inline-source-map-comment": "^1.0.5",
-    "jspm": "0.16.52",
+    "jspm": "0.16.53",
     "lodash.difference": "^4.3.0",
     "parent-require": "1.0.0"
   },
