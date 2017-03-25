@@ -47,7 +47,7 @@
     "proxyquire": "^1.7.10",
     "sinon": "^2.1.0",
     "systemjs-builder": "^0.16.0",
-    "unexpected": "^10.14.2",
+    "unexpected": "^10.26.2",
     "unexpected-express": "^8.2.0",
     "unexpected-http": "^5.5.0"
   },
