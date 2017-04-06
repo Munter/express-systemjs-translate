@@ -49,7 +49,7 @@
     "systemjs-builder": "^0.16.0",
     "unexpected": "^10.14.2",
     "unexpected-express": "^8.2.0",
-    "unexpected-http": "^5.5.0"
+    "unexpected-http": "^5.7.0"
   },
   "dependencies": {
     "chalk": "^1.1.3",
