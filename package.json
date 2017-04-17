@@ -48,7 +48,7 @@
     "sinon": "^2.1.0",
     "systemjs-builder": "^0.16.0",
     "unexpected": "^10.26.3",
-    "unexpected-express": "^8.5.0",
+    "unexpected-express": "^9.0.0",
     "unexpected-http": "^5.7.0"
   },
   "dependencies": {
